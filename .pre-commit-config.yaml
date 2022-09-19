@@ -1,0 +1,41 @@
+# 使用
+# pre-commit install
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml # 检查yaml
+    -   id: end-of-file-fixer # 确保文件以换行符结尾且仅以换行符结尾
+    -   id: trailing-whitespace # 末尾空格
+# 代码质量检查
+-   repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.4.0
+    hooks:
+    # -   id: go-fmt  # 修改源码文件
+    -   id: go-vet # 检查代码中的静态错误
+    # -   id: go-lint # 已弃用
+    # -   id: go-imports
+    -   id: go-cyclo # 代码复杂度
+        args: [-over=15]
+    # -   id: validate-toml
+    # -   id: no-go-testing # Checks that no files are using testing.T, if you want developers to use a different testing framework
+    # -   id: golangci-lint # goloangci-lint可以配置详细的检查策略
+    # -   id: go-critic
+    - id: go-unit-tests
+    - id: go-build # 在pre-commit文件中添加 FILES=$(go list ./...  | grep -v /vendor/ /test/) exec go build $FILES
+    - id: go-mod-tidy
+    - id: go-mod-vendor
+# definition
+# go-fmt - Runs gofmt, requires golang
+    # go-vet - Runs go vet, requires golang
+    # go-lint - Runs golint, requires https://github.com/golang/lint but is unmaintained & deprecated in favour of golangci-lint
+    # go-imports - Runs goimports, requires golang.org/x/tools/cmd/goimports
+    # go-cyclo - Runs gocyclo, require https://github.com/fzipp/gocyclo
+    # validate-toml - Runs tomlv, requires https://github.com/BurntSushi/toml/tree/master/cmd/tomlv
+    # no-go-testing - Checks that no files are using testing.T, if you want developers to use a different testing framework
+    # golangci-lint - run golangci-lint run ./..., requires golangci-lint
+    # go-critic - run gocritic check ./..., requires go-critic
+    # go-unit-tests - run go test -tags=unit -timeout 30s -short -v
+    # go-build - run go build, requires golang
+    # go-mod-tidy - run go mod tidy -v, requires golang
+    # go-mod-vendor - run go mod vendor, requires golang

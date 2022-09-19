@@ -1,0 +1,6 @@
+projectKey=gallery-go
+serverUrl=http://172.16.41.100:9070
+serverVersion=8.7.1.42226
+dashboardUrl=http://172.16.41.100:9070/dashboard?id=gallery-go
+ceTaskId=AYM5uLnNIGDWNWWgpGYN
+ceTaskUrl=http://172.16.41.100:9070/api/ce/task?id=AYM5uLnNIGDWNWWgpGYN

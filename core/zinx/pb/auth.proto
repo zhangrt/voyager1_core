@@ -1,0 +1,51 @@
+syntax = "proto3"; 						//指定版本信息，不指定会报错
+option go_package = "./";               //不指定会报错
+package pb;						        //后期生成go文件的包名
+
+// token 鉴权
+message Token {
+    string token = 1;
+}
+
+// path和method请求验证策略
+message Police {
+    string path = 1;
+    string method = 2;
+}
+
+message Result {
+    bool success = 1;
+    string msg = 2;
+    CustomClaims claims = 3;
+}
+
+message User {
+    int64  userID       = 1;
+    string UUID         = 2;
+    string authoryId    = 3;
+    CustomClaims claims = 4;
+}
+
+message CustomClaims {
+    BaseClaims claims       = 1;
+	int64 BufferTime        = 2;
+	StandardClaims standard = 3;
+}
+
+message BaseClaims {
+    int64  userID       = 1;
+    string UUID         = 2;
+    string authoryId    = 3;
+    string username     = 4;
+    string nickName     = 5;
+}
+
+message StandardClaims {
+	string audience     = 1;
+	int64 expiresAt     = 2;
+	string id           = 3;
+	int64 issuedAt      = 4;
+	string issuer       = 5;
+	int64 notBefore     = 6;
+	string subject      = 7;
+}
