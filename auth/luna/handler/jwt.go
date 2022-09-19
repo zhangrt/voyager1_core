@@ -4,10 +4,10 @@ import (
 	"strconv"
 	"time"
 
-	auth "github.com/xyy277/gallery/auth/luna"
+	auth "github.com/zhangrt/voyager1_core/auth/luna"
 
-	"github.com/xyy277/gallery/global"
-	"github.com/xyy277/gallery/global/response"
+	"github.com/zhangrt/voyager1_core/global"
+	"github.com/zhangrt/voyager1_core/global/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

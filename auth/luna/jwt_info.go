@@ -1,7 +1,7 @@
 package luna
 
 import (
-	"github.com/xyy277/gallery/global"
+	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/golang-jwt/jwt/v4"
 	uuid "github.com/satori/go.uuid"

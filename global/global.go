@@ -12,7 +12,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/xyy277/gallery/config"
+	"github.com/zhangrt/voyager1_core/config"
 )
 
 var (

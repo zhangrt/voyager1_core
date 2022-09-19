@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/songzhibin97/gkit/cache/local_cache"
-	"github.com/xyy277/gallery/config"
-	"github.com/xyy277/gallery/global"
+	"github.com/zhangrt/voyager1_core/config"
+	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"

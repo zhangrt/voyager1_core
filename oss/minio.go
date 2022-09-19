@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/xyy277/gallery/global"
+	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/gin-gonic/gin"
 	minio "github.com/minio/minio-go/v7"

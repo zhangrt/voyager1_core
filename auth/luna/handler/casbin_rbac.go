@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/xyy277/gallery/global/response"
+	"github.com/zhangrt/voyager1_core/global/response"
 
-	auth "github.com/xyy277/gallery/auth/luna"
+	auth "github.com/zhangrt/voyager1_core/auth/luna"
 
 	"github.com/gin-gonic/gin"
 )

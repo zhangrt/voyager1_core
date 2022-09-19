@@ -3,8 +3,8 @@ package luna
 import (
 	"time"
 
-	redis "github.com/xyy277/gallery/cache"
-	"github.com/xyy277/gallery/global"
+	redis "github.com/zhangrt/voyager1_core/cache"
+	"github.com/zhangrt/voyager1_core/global"
 )
 
 type JwtService struct{}

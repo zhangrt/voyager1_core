@@ -1,11 +1,11 @@
 package handler
 
 import (
-	auth "github.com/xyy277/gallery/auth/luna"
-	"github.com/xyy277/gallery/auth/star"
-	"github.com/xyy277/gallery/global/response"
+	auth "github.com/zhangrt/voyager1_core/auth/luna"
+	"github.com/zhangrt/voyager1_core/auth/star"
+	"github.com/zhangrt/voyager1_core/global/response"
 
-	"github.com/xyy277/gallery/global"
+	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/gin-gonic/gin"
 )

@@ -6,7 +6,7 @@ import (
 
 	v8 "github.com/go-redis/redis/v8"
 
-	"github.com/xyy277/gallery/global"
+	"github.com/zhangrt/voyager1_core/global"
 )
 
 type Result struct {

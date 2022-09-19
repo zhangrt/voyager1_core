@@ -1,6 +1,6 @@
 package star
 
-import "github.com/xyy277/gallery/auth/luna"
+import "github.com/zhangrt/voyager1_core/auth/luna"
 
 type Authentication struct{}
 

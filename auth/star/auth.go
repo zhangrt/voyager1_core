@@ -1,6 +1,6 @@
 package star
 
-import "github.com/xyy277/gallery/auth/luna"
+import "github.com/zhangrt/voyager1_core/auth/luna"
 
 // star 请求 luna的接口进行鉴权与授权
 type AUTH interface {

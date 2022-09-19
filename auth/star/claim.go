@@ -2,7 +2,7 @@ package star
 
 import (
 	uuid "github.com/satori/go.uuid"
-	"github.com/xyy277/gallery/auth/luna"
+	"github.com/zhangrt/voyager1_core/auth/luna"
 )
 
 type CLAIM interface {

@@ -1,5 +1,4 @@
-module github.com/xyy277/gallery
-
+module github.com/zhangrt/voyager1_core
 go 1.18
 
 require (
