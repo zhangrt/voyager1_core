@@ -22,6 +22,8 @@ type GS_BASE_USER struct {
 	UUID uuid.UUID `json:"uuid" gorm:"comment:用户UUID"`
 	// 用户名
 	Account string `json:"account" gorm:"comment:用户登录名"`
+	// 用户登录密码
+	Password string `json:"-"  gorm:"comment:用户登录密码"`
 	// 昵称
 	Name string `json:"name" gorm:"default:系统用户;comment:用户昵称"`
 	// 用户侧边主题

@@ -56,14 +56,14 @@ func JWTAuth() gin.HandlerFunc {
 			c.Header(global.G_CONFIG.AUTHKey.RefreshToken, newToken)
 			c.Header(global.G_CONFIG.AUTHKey.RefreshExpiresAt, strconv.FormatInt(newClaims.ExpiresAt, 10))
 			if global.G_CONFIG.System.UseMultipoint {
-				RedisJwtToken, err := jwt.GetCacheJWT(newClaims.Username)
+				RedisJwtToken, err := jwt.GetCacheJWT(newClaims.Account)
 				if err != nil {
 					global.G_LOG.Error("get redis jwt failed", zap.Error(err))
 				} else { // 当之前的取成功时才进行拉黑操作
 					_ = jwt.JsonInBlacklist(auth.JwtBlacklist{Jwt: RedisJwtToken})
 				}
 				// 无论如何都要记录当前的活跃状态
-				_ = jwt.SetCacheJWT(newToken, newClaims.Username)
+				_ = jwt.SetCacheJWT(newToken, newClaims.Account)
 			}
 		}
 		// set claims

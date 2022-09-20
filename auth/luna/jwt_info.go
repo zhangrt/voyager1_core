@@ -26,9 +26,9 @@ type BaseClaims struct {
 	// ID
 	ID uint
 	// 用户名
-	Username string
+	Account string
 	// 昵称
-	NickName string
+	Name string
 	// 权限ID
 	AuthorityId string
 	// 权限信息
