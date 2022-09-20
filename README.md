@@ -2,11 +2,11 @@
 
 模块封装
 
-## 依赖
+## 使用组件时添加依赖
 
-* go get github.com/xyy277/gallery
+* go get github.com/zhangrt/voyager1_core
 
-* Init初始化
+* Init初始化 import "github.com/zhangrt/voyager1_core"  -> NewInit()
 
 ## 代码结构
 

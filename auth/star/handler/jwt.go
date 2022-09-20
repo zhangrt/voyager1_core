@@ -1,7 +1,6 @@
 package handler
 
 import (
-	auth "github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/auth/star"
 	"github.com/zhangrt/voyager1_core/global/response"
 
@@ -9,8 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var jwt = auth.NewJWT()
 
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {

@@ -3,7 +3,8 @@ package global
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
+	uuid "github.com/satori/go.uuid"
+
 	"gorm.io/gorm"
 )
 
@@ -16,13 +17,17 @@ type GS_BASE_MODEL struct {
 
 // v0.2 针对基础业务做封装，被上层业务user结构体引用
 type GS_BASE_USER struct {
-	GS_BASE_MODEL
+	ID uint `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
 	// UUID
 	UUID uuid.UUID `json:"uuid" gorm:"comment:用户UUID"`
 	// 用户名
-	Username string `json:"userName" gorm:"comment:用户登录名"`
+	Account string `json:"account" gorm:"comment:用户登录名"`
 	// 昵称
-	NickName string `json:"nickName" gorm:"default:系统用户;comment:用户昵称"`
+	Name string `json:"name" gorm:"default:系统用户;comment:用户昵称"`
+	// 用户侧边主题
+	SideMode string `json:"sideMode" gorm:"default:dark;comment:用户主题"`
+	// 用户头像
+	HeaderImg string `json:"headerImg" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"`
 	// 权限ID
 	AuthorityId string `json:"authorityId" gorm:"default:888;comment:用户角色ID"`
 	// 部门Id
@@ -33,4 +38,12 @@ type GS_BASE_USER struct {
 	UnitId string `json:"unitId" gorm:"default:888;comment:单位ID"`
 	// 单位名称
 	UnitName string `json:"unitName" gorm:"default:888;comment:单位名称"`
+	// 用户手机号
+	Phone string `json:"phone"  gorm:"comment:用户手机号"`
+	// 用户邮箱
+	Email string `json:"email"  gorm:"comment:用户邮箱"`
+
+	CreatedAt time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
 }
