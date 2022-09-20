@@ -33,6 +33,8 @@ type BaseClaims struct {
 	AuthorityId string
 	// 权限信息
 	Authority interface{}
+	// 权限信息
+	Authorities []interface{}
 	// 部门Id
 	DepartMentId string
 	// 部门名称
