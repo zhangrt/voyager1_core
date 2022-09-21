@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	pb "github.com/zhangrt/voyager1_core/core/zinx/pb"
+	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -22,6 +22,11 @@ type TcpClient struct {
 	conn     net.Conn
 	PID      int32
 	isOnline chan bool
+
+	token   chan pb.Token
+	police  chan pb.Police
+	hasAuth chan bool
+	claims  chan pb.Result
 }
 
 func (client *TcpClient) Unpack(headdata []byte) (head *Message, err error) {
@@ -169,6 +174,12 @@ func NewTcpClient(ip string, port int) *TcpClient {
 		conn:     conn,
 		PID:      0,
 		isOnline: make(chan bool),
+
+		hasAuth: make(chan bool),
+
+		token:  make(chan pb.Token),
+		police: make(chan pb.Police),
+		claims: make(chan pb.Result),
 	}
 	return client
 }

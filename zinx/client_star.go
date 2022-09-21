@@ -1,14 +1,14 @@
-package main
+package zinx
 
 import (
 	"fmt"
 	"runtime"
 	"sync"
 
-	c "github.com/zhangrt/voyager1_core/core/client"
+	c "github.com/zhangrt/voyager1_core/zinx/core/client"
 )
 
-func main() {
+func client() {
 	// 开启一个waitgroup，同时运行3个goroutine
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
