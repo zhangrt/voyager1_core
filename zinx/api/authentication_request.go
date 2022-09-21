@@ -4,23 +4,23 @@ import (
 	"fmt"
 
 	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/core"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
 	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
+	"github.com/zhangrt/voyager1_core/zinx/core"
+	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-//世界聊天 路由业务
-type WorldChatApi struct {
+// 鉴权
+type AuthenticationRequestApi struct {
 	znet.BaseRouter
 }
 
-func (*WorldChatApi) Handle(request ziface.IRequest) {
+func (*AuthenticationRequestApi) Handle(request ziface.IRequest) {
 	//1. 将客户端传来的proto协议解码
-	msg := &pb.Talk{}
+	msg := &pb.Police{}
 	err := proto.Unmarshal(request.GetData(), msg)
 	if err != nil {
-		fmt.Println("Talk Unmarshal error ", err)
+		fmt.Println("Move: Position Unmarshal error ", err)
 		return
 	}
 
@@ -31,9 +31,10 @@ func (*WorldChatApi) Handle(request ziface.IRequest) {
 		request.GetConnection().Stop()
 		return
 	}
-	//3. 根据pID得到player对象
-	player := core.WorldMgrObj.GetPlayerByPID(pID.(int32))
 
-	//4. 让player对象发起聊天广播请求
-	player.Talk(msg.Content)
+	//3. 根据pID得到 star 对象
+	star := core.StarMgrObj.GetStarByPID(pID.(int32))
+
+	//4. 让 star 对象鉴权
+	star.AuthenticationRequest(msg.Path, msg.Method)
 }

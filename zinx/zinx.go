@@ -1,65 +1,40 @@
 package main
 
 import (
-	"fmt"
+	"runtime"
+	"sync"
 
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/core"
-	"github.com/aceld/zinx/znet"
-	"github.com/zhangrt/voyager1_core/core/zinx/api"
+	"github.com/zhangrt/voyager1_core/zinx/api"
+	"github.com/zhangrt/voyager1_core/zinx/core"
 )
 
 func main() {
-	s := znet.NewServer()
-	s.SetOnConnStart(OnConnecionAdd)
-	s.SetOnConnStop(OnConnectionLost)
 
-	//注册路由
-	s.AddRouter(2, &api.WorldChatApi{})
-	s.AddRouter(3, &api.MoveApi{})
-	s.Serve()
-}
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-//当客户端建立连接的时候的hook函数
-func OnConnecionAdd(conn ziface.IConnection) {
-	//创建一个玩家
-	player := core.NewPlayer(conn)
+	s := core.Server(
+		core.Router{
+			ID:     1,
+			ROUTER: &api.AuthorizationApi{},
+		},
+		core.Router{
+			ID:     2,
+			ROUTER: &api.AuthenticationRequestApi{},
+		},
+	)
 
-	//同步当前的PlayerID给客户端， 走MsgID:1 消息
-	player.SyncPID()
+	go func() {
+		defer wg.Done()
+		go s.Serve()
+	}()
 
-	//同步当前玩家的初始化坐标信息给客户端，走MsgID:200消息
-	player.BroadCastStartPosition()
+	client := core.NewTcpClient("127.0.0.1", 8999)
+	go func() {
+		go client.Start()
+	}()
 
-	//将当前新上线玩家添加到worldManager中
-	core.WorldMgrObj.AddPlayer(player)
-
-	//将该连接绑定属性PID
-	conn.SetProperty("pID", player.PID)
-
-	//同步周边玩家上线信息，与现实周边玩家信息
-	player.SyncSurrounding()
-
-	fmt.Println("=====> Player pIDID = ", player.PID, " arrived ====")
-}
-
-//当客户端断开连接的时候的hook函数
-func OnConnectionLost(conn ziface.IConnection) {
-	//获取当前连接的PID属性
-	pID, _ := conn.GetProperty("pID")
-	var playerID int32
-	if pID != nil {
-		playerID = pID.(int32)
-	}
-
-	//根据pID获取对应的玩家对象
-	player := core.WorldMgrObj.GetPlayerByPID(playerID)
-
-	//触发玩家下线业务
-	if player != nil {
-		player.LostConnection()
-	}
-
-	fmt.Println("====> Player ", playerID, " left =====")
+	wg.Wait()
 
 }

@@ -1,4 +1,4 @@
-package client
+package core
 
 import (
 	"bytes"
@@ -106,7 +106,7 @@ func (client *TcpClient) DoMsg(msg *Message) {
 		_ = proto.Unmarshal(msg.Data, syncpID)
 		client.isOnline <- true
 		//给当前客户端ID进行赋值
-	} else if msg.MsgID == 200 {
+	} else if msg.MsgID == 2 {
 		//服务器回执客户端广播数据
 
 		//解析proto
