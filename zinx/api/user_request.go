@@ -10,14 +10,14 @@ import (
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-// 鉴权
-type AuthenticationRequestApi struct {
+// 获取用户信息
+type UserRequestApi struct {
 	znet.BaseRouter
 }
 
-func (*AuthenticationRequestApi) Handle(request ziface.IRequest) {
+func (*UserRequestApi) Handle(request ziface.IRequest) {
 	//1. 将客户端传来的proto协议解码
-	msg := &pb.Police{}
+	msg := &pb.Token{}
 	err := proto.Unmarshal(request.GetData(), msg)
 	if err != nil {
 		fmt.Println("Move: Position Unmarshal error ", err)
@@ -36,5 +36,5 @@ func (*AuthenticationRequestApi) Handle(request ziface.IRequest) {
 	star := core.StarMgrObj.GetStarByPID(pID.(int32))
 
 	//4. 让 star 对象鉴权
-	star.AuthenticationRequest(msg.AuthorityId, msg.Path, msg.Method)
+	star.GetUserInfo(msg.Token)
 }

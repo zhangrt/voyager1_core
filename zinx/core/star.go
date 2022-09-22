@@ -3,11 +3,17 @@ package core
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/aceld/zinx/ziface"
+	auth "github.com/zhangrt/voyager1_core/auth/luna"
+	"github.com/zhangrt/voyager1_core/constant"
+	"github.com/zhangrt/voyager1_core/global"
+	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 	"google.golang.org/protobuf/proto"
 )
 
+// 客户端
 type Star struct {
 	PID  int32              // 客户端 star ID
 	Conn ziface.IConnection // 当前 star 的连接
@@ -65,13 +71,115 @@ func (s *Star) SendMsg(msgID uint32, data proto.Message) {
 		return
 	}
 
-	return
 }
 
-func (s *Star) Check(token string) {
+var jwt = auth.NewJWT()
 
+// 验证token合法并将结果发送回客户端 star
+func (s *Star) CheckToken(token string) {
+	msg := &pb.Result{}
+	if jwt.IsBlacklist(token) {
+		msg.Success = false
+		msg.Msg = "Your account is off-site logged in or the token is invalid"
+		s.SendMsg(3, msg)
+		return
+	}
+
+	j := auth.NewTOKEN()
+	claims, err := j.ParseToken(token)
+	if err != nil {
+		if err == auth.TokenExpired {
+			msg.Success = false
+			msg.Msg = "Authorization has expired"
+			s.SendMsg(3, msg)
+			return
+		}
+		msg.Success = false
+		msg.Msg = err.Error()
+		s.SendMsg(3, msg)
+		return
+	}
+
+	now := time.Now().Unix()
+	if claims.ExpiresAt-now < claims.BufferTime {
+		claims.ExpiresAt = now + global.G_CONFIG.JWT.ExpiresTime
+		newToken, _ := j.CreateTokenByOldToken(token, *claims)
+		newClaims, _ := j.ParseToken(newToken)
+		// 单点登录
+		if !global.G_CONFIG.System.UseMultipoint {
+			// 获取缓存中account的未过期token
+			RedisJwtToken, err := jwt.GetCacheJWT(newClaims.Account)
+			if err != nil {
+				msg.Success = false
+				msg.Msg = "get cache jwt failed"
+			} else {
+				// 当之前的取成功时才进行拉黑操作
+				// refresh token
+				msg.Success = true
+				msg.Msg = global.G_CONFIG.AUTHKey.RefreshToken + constant.MARKER + newToken
+				msg.Claims = protoTransformClaims(newClaims)
+				_ = jwt.JsonInBlacklist(auth.JwtBlacklist{Jwt: RedisJwtToken})
+			}
+			// 无论如何都要记录当前的活跃状态
+			_ = jwt.SetCacheJWT(newToken, newClaims.Account)
+
+		} else {
+			// 启用多点登录
+			msg.Success = true
+			msg.Msg = global.G_CONFIG.AUTHKey.RefreshToken + constant.MARKER + newToken
+			msg.Claims = protoTransformClaims(newClaims)
+		}
+		s.SendMsg(3, msg)
+		return
+	}
+	msg.Msg = "authorization success"
+	msg.Success = true
+	msg.Claims = protoTransformClaims(claims)
+	s.SendMsg(3, msg)
 }
 
-func (s *Star) AuthenticationRequest(path string, method string) {
+// 验证角色权限
+func (s *Star) AuthenticationRequest(authorityId string, path string, method string) {
+	msg := &pb.Result{}
+	success, _ := auth.CheckPolicy(authorityId, path, method)
+	msg.Success = success
+	if !success {
+		msg.Msg = "insufficient privileges"
+	}
+	s.SendMsg(3, msg)
+}
 
+// 获取用户信息
+func (s *Star) GetUserInfo(token string) {
+	msg := &pb.User{}
+	claims, _ := auth.GetUser(token)
+	msg.Claims = protoTransformClaims(claims)
+	msg.UserID = int64(claims.ID)
+	msg.UUID = claims.UUID.String()
+	msg.AuthorityId = claims.AuthorityId
+	s.SendMsg(4, msg)
+}
+
+// 转换
+func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
+	p := pb.CustomClaims{
+		Claims: &pb.BaseClaims{
+			UserID:      int64(c.BaseClaims.ID),
+			UUID:        c.BaseClaims.UUID.String(),
+			AuthorityId: c.BaseClaims.AuthorityId,
+			Account:     c.BaseClaims.Account,
+			Name:        c.BaseClaims.Name,
+		},
+		BufferTime: c.BufferTime,
+		Standard: &pb.StandardClaims{
+			Audience:  c.StandardClaims.Audience,
+			ExpiresAt: c.StandardClaims.ExpiresAt,
+			Id:        c.StandardClaims.Id,
+			IssuedAt:  c.StandardClaims.IssuedAt,
+			Issuer:    c.StandardClaims.Issuer,
+			NotBefore: c.StandardClaims.NotBefore,
+			Subject:   c.StandardClaims.Subject,
+		},
+	}
+	return &p
 }

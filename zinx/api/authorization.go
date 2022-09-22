@@ -35,5 +35,5 @@ func (*AuthorizationApi) Handle(request ziface.IRequest) {
 	star := core.StarMgrObj.GetStarByPID(pID.(int32))
 
 	//4. 让star对象验证token
-	star.Check(msg.Token)
+	star.CheckToken(msg.Token)
 }

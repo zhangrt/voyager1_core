@@ -9,6 +9,10 @@ import (
 
 func GetClaims(c *gin.Context) (*CustomClaims, error) {
 	token := c.Request.Header.Get(global.G_CONFIG.AUTHKey.Token)
+	return GetUser(token)
+}
+
+func GetUser(token string) (*CustomClaims, error) {
 	j := NewTOKEN()
 	claims, err := j.ParseToken(token)
 	if err != nil {

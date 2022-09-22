@@ -1,5 +1,7 @@
 package constant
 
-const ()
+const (
+	MARKER = "&:$"
+)
 
 const ()
