@@ -17,13 +17,13 @@
 ├── cache
 ├── config
 ├── constant
-├── core
 ├── global
 │   ├── request
 │   └── response
 ├── log
 ├── oss
-└── util
+├── util
+└── zinx
 
 ```
 
@@ -35,13 +35,13 @@
 | `cache`       | cache组件                | cache接口                 |
 | `config`      | 配置文件                 | 组件配置                   |
 | `constant`    | constant常量             | constant常量              |
-| `core`        | 核心包                   | 核心包                     |
 | `global`      | 全局对象                 | 全局对象                   |
 | `--request`   | 入参结构体               | 接收前端发送到后端的数据。   |
 | `--response`  | 出参结构体               | 返回给前端的数据结构体       |
 | `log`         | 日志组件                 | 日志组件接口                |
-| `oss`         | oss组件                  | oss组件接口                 |
+| `oss`         | oss组件                  | oss组件接口                |
 | `util`        | 工具包                   | 工具函数封装                |
+| `zinx`        | zinx核心服务             | 基于zinx实现的高并发Server   |
 
 ## ProtoBuf
 

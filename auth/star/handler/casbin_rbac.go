@@ -14,7 +14,7 @@ func CasbinHandler() gin.HandlerFunc {
 		obj := c.Request.URL.Path
 		// 获取请求方法
 		act := c.Request.Method
-		success := star.NewAUTH().RemoteAuthenticationPolicy(obj, act)
+		success := star.NewAUTH().GrantedAuthority(obj, act)
 		if success {
 			c.Next()
 		} else {
