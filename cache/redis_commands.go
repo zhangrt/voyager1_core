@@ -2,101 +2,45 @@ package cache
 
 import (
 	"context"
-	"time"
 
-	v8 "github.com/go-redis/redis/v8"
-
-	"github.com/zhangrt/voyager1_core/global"
+	"github.com/go-redis/redis/v8"
 )
 
-type Result struct {
-	val int64
+var Redis_Cache *redis.Client
+var ctx = context.Background()
+
+func ConnRedis(constr string) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     constr, // redis地址
+		Password: "",     // redis密码，没有设置，则留空
+		DB:       0,      // 使用默sss数据库
+	})
+
+	Redis_Cache = client
 }
 
-// check nil
-func Nil() bool {
-	if global.G_REDIS_CLUSTER_MOD {
-		return global.G_REDIS_CLUSTER == nil
-	} else {
-		return global.G_REDIS_STANDALONE == nil
+func Get(key string) string {
+	val, err := Redis_Cache.Get(ctx, key).Result()
+	// 判断查询是否出错
+	if err != nil {
+		panic(err)
 	}
+	return val
 }
 
-func ExistsResultByKey(key string) (int64, error) {
-	var r int64
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		r, err = global.G_REDIS_CLUSTER.Exists(context.Background(), key).Result()
-	} else {
-		r, err = global.G_REDIS_STANDALONE.Exists(context.Background(), key).Result()
-
+func Set(key string, value string) string {
+	err := Redis_Cache.Set(ctx, key, value, 0).Err()
+	if err != nil {
+		panic(err)
 	}
-	return r, err
+	return key
 }
 
-func GetInt(key string) (int, error) {
-	var r int
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		r, err = global.G_REDIS_CLUSTER.Get(context.Background(), key).Int()
-	} else {
-		r, err = global.G_REDIS_STANDALONE.Get(context.Background(), key).Int()
-
+func Del(key string) bool {
+	// 删除key
+	err := Redis_Cache.Del(ctx, key).Err()
+	if err != nil {
+		panic(err)
 	}
-	return r, err
-}
-
-func Incr(key string) error {
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		err = global.G_REDIS_CLUSTER.Incr(context.Background(), key).Err()
-	} else {
-		err = global.G_REDIS_STANDALONE.Incr(context.Background(), key).Err()
-
-	}
-	return err
-}
-
-func TxPipeline() v8.Pipeliner {
-	var pipe v8.Pipeliner
-	if global.G_REDIS_CLUSTER_MOD {
-		pipe = global.G_REDIS_CLUSTER.TxPipeline()
-	} else {
-		pipe = global.G_REDIS_STANDALONE.TxPipeline()
-
-	}
-	return pipe
-}
-
-func PTTL(key string) (time.Duration, error) {
-	var t time.Duration
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		t, err = global.G_REDIS_CLUSTER.PTTL(context.Background(), key).Result()
-	} else {
-		t, err = global.G_REDIS_STANDALONE.PTTL(context.Background(), key).Result()
-	}
-	return t, err
-}
-
-func GetResult(key string) (string, error) {
-	var r string
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		r, err = global.G_REDIS_CLUSTER.Get(context.Background(), key).Result()
-	} else {
-		r, err = global.G_REDIS_STANDALONE.Get(context.Background(), key).Result()
-
-	}
-	return r, err
-}
-
-func Set(key string, value interface{}, expiration time.Duration) error {
-	var err error
-	if global.G_REDIS_CLUSTER_MOD {
-		err = global.G_REDIS_CLUSTER.Set(context.Background(), key, value, expiration).Err()
-	} else {
-		err = global.G_REDIS_STANDALONE.Set(context.Background(), key, value, expiration).Err()
-	}
-	return err
+	return true
 }
