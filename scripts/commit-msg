@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# 用 `` 可以将命令的输出结果赋值给变量
+# 获取当前提交的 commit msg
+commit_msg=`cat $1`
+
+# 获取用户 email
+email=`git config user.email`
+msg_re="^(feat|fix|docs|build|style|refactor|perf|test|build|ci|chore|revert|)(\(.+\))?: .{1,100}"
+
+if [[ ! $commit_msg =~ $msg_re ]]
+then
+    echo "不合法的 commit 消息提交格式，请使用正确的格式：
+    feat: add comments
+    fix: handle events on blur (close #28)
+    详情请查看 git commit 提交规范：https://github.com/woai3c/Front-end-articles/blob/master/git%20commit%20style.md"
+
+    # 异常退出
+    exit 1
+fi

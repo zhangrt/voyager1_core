@@ -97,3 +97,44 @@
 编译时，protobuf 编译器会把 .proto 文件编译成 .pd.go 文件
 
 ### 使用.proto开发
+
+### 文件格式
+
+* 小写字母，当有多个单词时通过 _ 连接
+
+### git commit message 约束
+
+**_type: subject(scope)_**
+
+* type：用于说明commit的类别，规定为如下几种
+* feat：新增功能；
+* fix：修复bug；
+* docs：修改文档；
+* refactor：代码重构，未新增任何功能和修复任何bug；
+* build：改变构建流程，新增依赖库、工具等（例如webpack修改）；
+* style：仅仅修改了空格、缩进等，不改变代码逻辑；
+* perf：改善性能和体现的修改；
+* chore：非src和test的修改；
+* test：测试用例的修改；
+* ci：自动化流程配置修改；
+* revert：回滚到上一个版本；
+* scope：【可选】用于说明commit的影响范围
+* subject：commit的简要说明，尽量简短
+
+## 代码质量检查
+
+### pre-commit
+
+pip install pre-commit，需要安装python环境
+
+#### Doc
+
+<https://pre-commit.com/>
+
+### 使用git hook
+
+* 1、执行 pre-commit install 将会在git hook目录安装pre-commit文件 无需修改
+
+* 2、复制scripts目录下commit-msg 和 pre-push 两个文件到工程 ./.git/hook 目录下
+
+* 3、建议使用sourcetree提交代码，可以看到hook的完整日志

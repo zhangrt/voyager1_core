@@ -1,0 +1,6 @@
+#!/bin/sh
+#!/usr/bin/env bash
+# sonar task
+go test ./service/... ./utils/... ./repository/... ./plugin/... -coverprofile="./sonar/cov.out"
+
+sonar-scanner.bat
