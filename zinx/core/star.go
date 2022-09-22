@@ -153,10 +153,12 @@ func (s *Star) AuthenticationRequest(authorityId string, path string, method str
 func (s *Star) GetUserInfo(token string) {
 	msg := &pb.User{}
 	claims, _ := auth.GetUser(token)
-	msg.Claims = protoTransformClaims(claims)
-	msg.UserID = int64(claims.ID)
-	msg.UUID = claims.UUID.String()
-	msg.AuthorityId = claims.AuthorityId
+	if claims != nil {
+		msg.Claims = protoTransformClaims(claims)
+		msg.UserID = int64(claims.ID)
+		msg.UUID = claims.UUID.String()
+		msg.AuthorityId = claims.AuthorityId
+	}
 	s.SendMsg(4, msg)
 }
 
