@@ -1,6 +1,8 @@
 package cache
 
 type Cache struct {
+	CacheType        string
+	ConnectionString string
 }
 
 var Globle_Cache interface{}
@@ -9,11 +11,11 @@ func init() {
 
 }
 
-func Conn(cachetype string, constr string) {
-	switch cachetype {
+func (cache Cache) Conn() {
+	switch cache.CacheType {
 	case "redis":
-		ConnRedis(constr)
-		Globle_Cache = Redis_Cache
+		ConnRedis(cache.ConnectionString)
+		Globle_Cache = redis_Cache
 	default:
 	}
 }
