@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -33,8 +34,8 @@ func Get(key string) string {
 	return val
 }
 
-func Set(key string, value string) string {
-	err := redis_Cache.Set(ctx, key, value, 0).Err()
+func Set(key string, value string, exp time.Duration) string {
+	err := redis_Cache.Set(ctx, key, value, exp).Err()
 	if err != nil {
 		panic(err)
 	}
