@@ -1,4 +1,4 @@
-package core
+package luna
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// 客户端
+// 客户端 star 由 Server 维护管理的一组 client
 type Star struct {
 	PID  int32              // 客户端 star ID
 	Conn ziface.IConnection // 当前 star 的连接
@@ -76,12 +76,15 @@ func (s *Star) SendMsg(msgID uint32, data proto.Message) {
 var jwt = auth.NewJWT()
 
 // 验证token合法并将结果发送回客户端 star
-func (s *Star) CheckToken(token string) {
+func (s *Star) CheckToken(req *pb.Token) {
+	token := req.Token
 	msg := &pb.Result{}
+	msg.Key = req.Key
+
 	if jwt.IsBlacklist(token) {
 		msg.Success = false
 		msg.Msg = "Your account is off-site logged in or the token is invalid"
-		s.SendMsg(3, msg)
+		s.SendMsg(constant.TOKEN_RES, msg)
 		return
 	}
 
@@ -91,12 +94,11 @@ func (s *Star) CheckToken(token string) {
 		if err == auth.TokenExpired {
 			msg.Success = false
 			msg.Msg = "Authorization has expired"
-			s.SendMsg(3, msg)
-			return
+		} else {
+			msg.Success = false
+			msg.Msg = err.Error()
 		}
-		msg.Success = false
-		msg.Msg = err.Error()
-		s.SendMsg(3, msg)
+		s.SendMsg(constant.TOKEN_RES, msg)
 		return
 	}
 
@@ -105,6 +107,7 @@ func (s *Star) CheckToken(token string) {
 		claims.ExpiresAt = now + global.G_CONFIG.JWT.ExpiresTime
 		newToken, _ := j.CreateTokenByOldToken(token, *claims)
 		newClaims, _ := j.ParseToken(newToken)
+
 		// 单点登录
 		if !global.G_CONFIG.System.UseMultipoint {
 			// 获取缓存中account的未过期token
@@ -129,37 +132,45 @@ func (s *Star) CheckToken(token string) {
 			msg.Msg = global.G_CONFIG.AUTHKey.RefreshToken + constant.MARKER + newToken
 			msg.Claims = protoTransformClaims(newClaims)
 		}
-		s.SendMsg(3, msg)
+		s.SendMsg(constant.TOKEN_RES, msg)
 		return
 	}
 	msg.Msg = "authorization success"
 	msg.Success = true
 	msg.Claims = protoTransformClaims(claims)
-	s.SendMsg(3, msg)
+	s.SendMsg(constant.TOKEN_RES, msg)
 }
 
 // 验证角色权限
-func (s *Star) AuthenticationRequest(authorityId string, path string, method string) {
+func (s *Star) AuthenticationRequest(req *pb.Policy) {
 	msg := &pb.Result{}
-	success, _ := auth.CheckPolicy(authorityId, path, method)
+	msg.Key = req.Key
+	success, _ := auth.CheckPolicy(req.AuthorityId, req.Path, req.Method)
 	msg.Success = success
 	if !success {
 		msg.Msg = "insufficient privileges"
 	}
-	s.SendMsg(3, msg)
+	s.SendMsg(constant.POLICY_RES, msg)
 }
 
 // 获取用户信息
-func (s *Star) GetUserInfo(token string) {
+func (s *Star) GetUserInfo(req *pb.Token) {
 	msg := &pb.User{}
-	claims, _ := auth.GetUser(token)
+	msg.Key = req.Key
+	claims, _ := auth.GetUser(req.Token)
 	if claims != nil {
 		msg.Claims = protoTransformClaims(claims)
 		msg.UserID = int64(claims.ID)
 		msg.UUID = claims.UUID.String()
 		msg.AuthorityId = claims.AuthorityId
 	}
-	s.SendMsg(4, msg)
+	s.SendMsg(constant.USER_RES, msg)
+}
+
+func (s *Star) Receipe(id int32) {
+	msg := &pb.Receipe{}
+	msg.Id = s.PID
+	s.SendMsg(constant.HEARTBEAT_RES, msg)
 }
 
 // 转换
