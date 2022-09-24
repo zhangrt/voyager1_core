@@ -18,29 +18,63 @@ type Statellite struct {
 	ResultToken   map[string]*pb.Result // token验证结果
 	ResultPolicy  map[string]*pb.Result // 权限校验结果
 	ResultUser    map[string]*pb.User   // 用户信息获取结果
+	MsgKeys       map[string]uint32     // key - MsgID 存放唯一键值对key和请求ID
 	setTokenLock  sync.RWMutex
 	setPolicyLock sync.RWMutex
 	setUserLock   sync.RWMutex
 	getTokenLog   sync.RWMutex
 	getPolicyLock sync.RWMutex
 	getUserLock   sync.RWMutex
+	ClientObj     map[int32]*TcpClient
 }
 
 var (
 	StatelliteMgrObj *Statellite
-	ClientObj        map[int32]*TcpClient
 )
 
 //提供 Statellite 初始化方法
 func init() {
 	StatelliteMgrObj = &Statellite{
+		MsgKeys:      map[string]uint32{},
 		TokenReq:     make(map[string]*pb.Token),
 		PolicyReq:    make(map[string]*pb.Policy),
 		UserReq:      make(map[string]*pb.Token),
 		ResultToken:  make(map[string]*pb.Result), // token验证结果
 		ResultPolicy: make(map[string]*pb.Result), // 权限校验结果
 		ResultUser:   make(map[string]*pb.User),   // 用户信息结果
+		ClientObj:    make(map[int32]*TcpClient),
 	}
+}
+
+func (statellite *Statellite) AddMsgKey(key string, msgID uint32) {
+	keyMap := map[string]uint32{
+
+		key: msgID,
+	}
+	statellite.MsgKeys = keyMap
+
+}
+
+func (statellite *Statellite) RemoveMsgKey(key string) {
+	delete(statellite.MsgKeys, key)
+}
+
+func (statellite *Statellite) GetMsgKey() (string, uint32) {
+	k := ""
+	var m uint32
+	ms := statellite.MsgKeys
+	if len(ms) > 0 {
+		for e := range ms {
+			k = e
+			m = ms[k]
+		}
+	}
+	return k, m
+}
+
+func (statellite *Statellite) HasMsgKey() bool {
+
+	return len(statellite.MsgKeys) > 0
 }
 
 // --------------------------------------------------------------------------Result----------------------------------------------------------------------------

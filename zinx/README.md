@@ -7,3 +7,7 @@
 ## star-Client
 
 `star`
+
+## 测试类
+
+`zinx_test.go`

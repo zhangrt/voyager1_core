@@ -59,39 +59,79 @@ func TestSer(t *testing.T) {
 	}
 
 	{
-		client := star.NewTcpClient("127.0.0.1", 8999)
+		client1 := star.NewTcpClient("127.0.0.1", 8999)
+		client2 := star.NewTcpClient("127.0.0.1", 8999)
 
 		go func() {
-			go client.Start()
+			star.StatelliteMgrObj.ClientObj[0] = client1
+			go client1.Start()
 
 		}()
 
 		go func() {
-			token := pb.Token{
-				Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
-			}
+			star.StatelliteMgrObj.ClientObj[1] = client2
+			go client2.Start()
 
-			uid := uuid.NewV4().String()
+		}()
 
-			// 请求
-			star.StatelliteMgrObj.AddTokenReq(uid, &token)
-
-			client.PushKey(star.MsgKey{
-				Key:   uid,
-				MsgID: constant.TOKEN_REQ,
-			})
-
+		go func() {
 			for {
-				// 结果
-				r := star.StatelliteMgrObj.GetTokenResult(uid)
-				if r != nil {
-					println("<Main() GetTokenResult Key>: ", r.Key)
-					break
+				token := pb.Token{
+					Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
 				}
-				time.Sleep(time.Millisecond)
-			}
 
-			time.Sleep(time.Minute)
+				uid := uuid.NewV4().String()
+
+				// 请求
+				star.StatelliteMgrObj.AddTokenReq(uid, &token)
+
+				star.StatelliteMgrObj.AddMsgKey(uid, constant.TOKEN_REQ)
+
+				for {
+					// 结果
+					r := star.StatelliteMgrObj.GetTokenResult(uid)
+					if r != nil {
+						println("Key >>>>> ", uid)
+						println("<Clinet1111111111111() GetTokenResult Key>: ", r.Key)
+						println("====================== %d =========================", uid == r.Key)
+						star.StatelliteMgrObj.RemoveTokenResult(uid)
+						break
+					}
+					// time.Sleep(time.Millisecond)
+				}
+
+				time.Sleep(time.Millisecond * 100)
+			}
+		}()
+
+		go func() {
+			for {
+				token := pb.Token{
+					Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
+				}
+
+				uid := uuid.NewV4().String()
+
+				// 请求
+				star.StatelliteMgrObj.AddTokenReq(uid, &token)
+
+				star.StatelliteMgrObj.AddMsgKey(uid, constant.TOKEN_REQ)
+
+				for {
+					// 结果
+					r := star.StatelliteMgrObj.GetTokenResult(uid)
+					if r != nil {
+						println("Key <<<<<< ", uid)
+						println("<Clinet2222222222222() GetTokenResult Key>: ", r.Key)
+						println("====================== %d =========================", uid == r.Key)
+						star.StatelliteMgrObj.RemoveTokenResult(uid)
+						break
+					}
+					// time.Sleep(time.Millisecond)
+				}
+
+				time.Sleep(time.Millisecond * 200)
+			}
 		}()
 	}
 

@@ -2,13 +2,10 @@ package star
 
 import (
 	"bytes"
-	"container/list"
 	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
-	"runtime"
-	"sync"
 	"time"
 
 	"github.com/zhangrt/voyager1_core/constant"
@@ -24,13 +21,10 @@ type Message struct {
 
 // Client
 type TcpClient struct {
-	conn        net.Conn
-	PID         int32
-	isOnline    chan bool
-	RequestKeys *list.List
+	conn     net.Conn
+	PID      int32
+	isOnline bool
 }
-
-var keyLock sync.RWMutex
 
 func (client *TcpClient) Unpack(headdata []byte) (head *Message, err error) {
 	headBuf := bytes.NewReader(headdata)
@@ -109,19 +103,13 @@ func (client *TcpClient) DoMsg(msg *Message) {
 		result := &pb.Result{}
 		_ = proto.Unmarshal(msg.Data, result)
 
-		println("TokenReq Success: ", result.Success)
-		println("TokenReq Msg:", result.Msg)
+		println("TOKEN_RES : ", result.Success)
+		println("TOKEN_RES :", result.Msg)
 
 		// Key作为客户端验证结果与请求一一对应的唯一性标识(可用UUID)，需要在请求时传入，并不做任何处理，由Server返回
 		StatelliteMgrObj.SetTokenResult(result.Key, result)
-
 		// 必须做的步骤
-		client.RemoveKey(MsgKey{
-			Key:   result.Key,
-			MsgID: msg.MsgID,
-		})
-		// 解锁
-		keyLock.RUnlock()
+		StatelliteMgrObj.RemoveMsgKey(result.Key)
 
 	case constant.POLICY_RES: // 权限验证回执
 
@@ -138,11 +126,12 @@ func (client *TcpClient) DoMsg(msg *Message) {
 		StatelliteMgrObj.SetUserResult(user.Key, user)
 
 	case constant.HEARTBEAT_RES: // 心跳回执
-
 		receipe := &pb.Receipe{}
 		_ = proto.Unmarshal(msg.Data, receipe)
 		client.PID = receipe.Id
-		client.isOnline <- true
+		println("HEARTBEAT_RES ID:", receipe.Id)
+
+		client.isOnline = true
 	default:
 		fmt.Println("unknown msg has received")
 	}
@@ -150,6 +139,7 @@ func (client *TcpClient) DoMsg(msg *Message) {
 }
 
 func (client *TcpClient) Start() {
+
 	// 处理回执
 	go func() {
 		for {
@@ -176,15 +166,17 @@ func (client *TcpClient) Start() {
 
 			//处理服务器回执业务
 			client.DoMsg(pkgHead)
-
 		}
 	}()
 
 	// 心跳
 	go func() {
 		for {
+			if client.conn == nil {
+				break
+			}
 			client.HeartBeat()
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 1)
 		}
 	}()
 
@@ -193,66 +185,75 @@ func (client *TcpClient) Start() {
 		client.DoBusiness()
 	}()
 
-	// 10s后，断开连接
-	for {
-		select {
-		case <-client.isOnline:
-			fmt.Println("heartbeat")
-		case <-time.After(time.Second * 10):
-			_ = client.conn.Close()
-			return
+	go func() {
+		for {
+			if client.isOnline {
+				fmt.Println("Online:::::::::::::::::::::::::::", client.isOnline)
+			} else {
+				fmt.Println("DisOnline :::::::::::::::::::::::::::", client.isOnline)
+				time.Sleep(time.Second)
+			}
+			time.Sleep(time.Second * 10)
+			// select {
+			// case <-client.isOnline:
+			// 	fmt.Println("Online:::::::::::::::::::::::::::", <-client.isOnline)
+			// 	return
+			// }
+			// case <-time.After(time.Second * 30):
+			// 	println("Close Conn >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+			// 	_ = client.conn.Close()
+			// 	return
+			// }
 		}
-	}
+	}()
+
 }
 
 // remote请求的业务协程
 func (client *TcpClient) DoBusiness() {
+
 	fmt.Println("business start .....")
-	var wg sync.WaitGroup
-	num := runtime.NumCPU()
-	wg.Add(num)
 
-	for i := 0; i < num; i++ {
-		go func() {
+	for {
+		key, msgID := StatelliteMgrObj.GetMsgKey()
+		if key == "" {
+			time.Sleep(time.Millisecond * 10)
+			continue
+		} else {
+			StatelliteMgrObj.RemoveMsgKey(key)
+		}
 
-			for {
-				// 从 msg key 数据集中获取存在的数据信息
-				if client.hasKey() {
-					// 锁
-					keyLock.RLock()
-					msgKey := client.getKey()
-					var msg proto.Message
+		var msg proto.Message
 
-					switch msgKey.MsgID {
+		switch msgID {
 
-					case constant.TOKEN_REQ:
+		case constant.TOKEN_REQ:
 
-						msg = StatelliteMgrObj.GetTokenReq(msgKey.Key)
+			println("TOKEN_REQ :", key)
+			msg = StatelliteMgrObj.GetTokenReq(key)
 
-					case constant.POLICY_REQ:
+		case constant.POLICY_REQ:
 
-						msg = StatelliteMgrObj.GetPolicyReq(msgKey.Key)
+			msg = StatelliteMgrObj.GetPolicyReq(key)
 
-					case constant.USER_REQ:
+		case constant.USER_REQ:
 
-						msg = StatelliteMgrObj.GetPolicyReq(msgKey.Key)
+			msg = StatelliteMgrObj.GetPolicyReq(key)
 
-					default:
-						println("unknown msgKey.msgID")
-					}
+		default:
+			println("unknown msgKey.msgID")
+		}
 
-					if msg != nil {
-						client.SendMsg(msgKey.MsgID, msg)
-					}
+		if msg != nil {
+			client.SendMsg(msgID, msg)
 
-				}
+		}
 
-			}
-			wg.Done()
+		time.Sleep(time.Millisecond * 50)
 
-		}()
 	}
-	wg.Wait()
+
+	// }
 
 }
 
@@ -260,7 +261,7 @@ func (client *TcpClient) DoBusiness() {
 func (client *TcpClient) HeartBeat() {
 	msg := &pb.HearBeat{}
 	msg.Id = client.PID
-	println("heartBeat ID:", msg.Id)
+	println("heartBeat REQ ID:", msg.Id)
 	client.SendMsg(constant.HEARTBEAT_REQ, msg)
 }
 
@@ -274,46 +275,7 @@ func NewTcpClient(ip string, port int) *TcpClient {
 	client := &TcpClient{
 		conn:     conn,
 		PID:      0,
-		isOnline: make(chan bool),
+		isOnline: false,
 	}
-	client.RequestKeys = list.New()
 	return client
-}
-
-// 采用pushback
-func (client *TcpClient) PushKey(msgKey MsgKey) {
-	keyLock.Lock()
-	l := client.RequestKeys
-	l.PushBack(msgKey)
-	keyLock.Unlock()
-}
-
-func (client *TcpClient) RemoveKey(msgKey MsgKey) {
-	keyLock.Lock()
-	l := client.RequestKeys
-	for e := l.Front(); e != nil; {
-		next := e.Next()
-		// 查找删除
-		if e.Value.(MsgKey).Key == msgKey.Key {
-			l.Remove(e)
-			break
-		}
-		e = next
-	}
-	keyLock.Unlock()
-}
-
-// get front
-func (client *TcpClient) getKey() MsgKey {
-	keyLock.RLock()
-	e := client.RequestKeys.Front()
-	defer keyLock.RUnlock()
-	if e == nil {
-		return MsgKey{}
-	}
-	return e.Value.(MsgKey)
-}
-
-func (client *TcpClient) hasKey() bool {
-	return client.RequestKeys.Len() > 0
 }
