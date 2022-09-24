@@ -47,11 +47,8 @@ func init() {
 }
 
 func (statellite *Statellite) AddMsgKey(key string, msgID uint32) {
-	keyMap := map[string]uint32{
 
-		key: msgID,
-	}
-	statellite.MsgKeys = keyMap
+	statellite.MsgKeys[key] = msgID
 
 }
 

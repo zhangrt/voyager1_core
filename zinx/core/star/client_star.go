@@ -176,7 +176,7 @@ func (client *TcpClient) Start() {
 				break
 			}
 			client.HeartBeat()
-			time.Sleep(time.Second * 1)
+			time.Sleep(time.Second * 5)
 		}
 	}()
 
@@ -248,8 +248,6 @@ func (client *TcpClient) DoBusiness() {
 			client.SendMsg(msgID, msg)
 
 		}
-
-		time.Sleep(time.Millisecond * 50)
 
 	}
 

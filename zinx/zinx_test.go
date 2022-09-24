@@ -29,7 +29,7 @@ func TestSer(t *testing.T) {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(6)
 
 	{
 		s := luna.Server(
@@ -60,17 +60,10 @@ func TestSer(t *testing.T) {
 
 	{
 		client1 := star.NewTcpClient("127.0.0.1", 8999)
-		client2 := star.NewTcpClient("127.0.0.1", 8999)
 
 		go func() {
 			star.StatelliteMgrObj.ClientObj[0] = client1
 			go client1.Start()
-
-		}()
-
-		go func() {
-			star.StatelliteMgrObj.ClientObj[1] = client2
-			go client2.Start()
 
 		}()
 
@@ -82,6 +75,8 @@ func TestSer(t *testing.T) {
 
 				uid := uuid.NewV4().String()
 
+				println("UID111111111111111111111111 >>>>>>>>>>>>>", uid)
+
 				// 请求
 				star.StatelliteMgrObj.AddTokenReq(uid, &token)
 
@@ -92,12 +87,12 @@ func TestSer(t *testing.T) {
 					r := star.StatelliteMgrObj.GetTokenResult(uid)
 					if r != nil {
 						println("Key >>>>> ", uid)
-						println("<Clinet1111111111111() GetTokenResult Key>: ", r.Key)
+						println("<111111111111111111111111 GetTokenResult Key>: ", r.Key)
 						println("====================== %d =========================", uid == r.Key)
 						star.StatelliteMgrObj.RemoveTokenResult(uid)
 						break
 					}
-					// time.Sleep(time.Millisecond)
+					time.Sleep(time.Millisecond * 50)
 				}
 
 				time.Sleep(time.Millisecond * 100)
@@ -111,6 +106,7 @@ func TestSer(t *testing.T) {
 				}
 
 				uid := uuid.NewV4().String()
+				println("UID2222222222222222222222222 >>>>>>>>>>>>>", uid)
 
 				// 请求
 				star.StatelliteMgrObj.AddTokenReq(uid, &token)
@@ -122,15 +118,47 @@ func TestSer(t *testing.T) {
 					r := star.StatelliteMgrObj.GetTokenResult(uid)
 					if r != nil {
 						println("Key <<<<<< ", uid)
-						println("<Clinet2222222222222() GetTokenResult Key>: ", r.Key)
+						println("<222222222222222222222222 GetTokenResult Key>: ", r.Key)
 						println("====================== %d =========================", uid == r.Key)
 						star.StatelliteMgrObj.RemoveTokenResult(uid)
+						defer wg.Done()
 						break
 					}
-					// time.Sleep(time.Millisecond)
+					time.Sleep(time.Millisecond * 50)
+				}
+				time.Sleep(time.Millisecond * 200)
+			}
+		}()
+
+		go func() {
+			for {
+				token := pb.Token{
+					Token: "adavasdasd",
 				}
 
-				time.Sleep(time.Millisecond * 200)
+				uid := uuid.NewV4().String()
+				println("UID3333333333333333333333 >>>>>>>>>>>>>", uid)
+
+				// 请求
+				star.StatelliteMgrObj.AddTokenReq(uid, &token)
+
+				star.StatelliteMgrObj.AddMsgKey(uid, constant.TOKEN_REQ)
+
+				for {
+					// 结果
+					r := star.StatelliteMgrObj.GetTokenResult(uid)
+					if r != nil {
+						println("Key <<<<<< ", uid)
+						println("<333333333333333333333333 GetTokenResult Key>: ", r.Key)
+						println("====================== %d =========================", uid == r.Key)
+						star.StatelliteMgrObj.RemoveTokenResult(uid)
+						defer wg.Done()
+						break
+					}
+					time.Sleep(time.Millisecond * 50)
+				}
+
+				time.Sleep(time.Millisecond * 300)
 			}
 		}()
 	}
