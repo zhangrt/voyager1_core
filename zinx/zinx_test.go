@@ -92,10 +92,10 @@ func TestSer(t *testing.T) {
 						star.StatelliteMgrObj.RemoveTokenResult(uid)
 						break
 					}
-					time.Sleep(time.Millisecond * 50)
+					time.Sleep(time.Millisecond * 10)
 				}
 
-				time.Sleep(time.Millisecond * 100)
+				time.Sleep(time.Millisecond * 10)
 			}
 		}()
 
@@ -124,9 +124,9 @@ func TestSer(t *testing.T) {
 						defer wg.Done()
 						break
 					}
-					time.Sleep(time.Millisecond * 50)
+					time.Sleep(time.Millisecond * 10)
 				}
-				time.Sleep(time.Millisecond * 200)
+				time.Sleep(time.Millisecond * 20)
 			}
 		}()
 
@@ -155,10 +155,10 @@ func TestSer(t *testing.T) {
 						defer wg.Done()
 						break
 					}
-					time.Sleep(time.Millisecond * 50)
+					time.Sleep(time.Millisecond * 10)
 				}
 
-				time.Sleep(time.Millisecond * 300)
+				time.Sleep(time.Millisecond * 5)
 			}
 		}()
 	}

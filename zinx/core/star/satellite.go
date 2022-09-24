@@ -19,6 +19,7 @@ type Statellite struct {
 	ResultPolicy  map[string]*pb.Result // 权限校验结果
 	ResultUser    map[string]*pb.User   // 用户信息获取结果
 	MsgKeys       map[string]uint32     // key - MsgID 存放唯一键值对key和请求ID
+	keyLock       sync.RWMutex
 	setTokenLock  sync.RWMutex
 	setPolicyLock sync.RWMutex
 	setUserLock   sync.RWMutex
@@ -47,16 +48,19 @@ func init() {
 }
 
 func (statellite *Statellite) AddMsgKey(key string, msgID uint32) {
-
+	statellite.keyLock.Lock()
 	statellite.MsgKeys[key] = msgID
-
+	statellite.keyLock.Unlock()
 }
 
 func (statellite *Statellite) RemoveMsgKey(key string) {
+	statellite.keyLock.Lock()
 	delete(statellite.MsgKeys, key)
+	statellite.keyLock.Unlock()
 }
 
 func (statellite *Statellite) GetMsgKey() (string, uint32) {
+	statellite.keyLock.RLock()
 	k := ""
 	var m uint32
 	ms := statellite.MsgKeys
@@ -66,12 +70,15 @@ func (statellite *Statellite) GetMsgKey() (string, uint32) {
 			m = ms[k]
 		}
 	}
+	statellite.keyLock.RUnlock()
 	return k, m
 }
 
-func (statellite *Statellite) HasMsgKey() bool {
-
-	return len(statellite.MsgKeys) > 0
+func (statellite *Statellite) GetMsgIDByKey(key string) uint32 {
+	statellite.keyLock.Lock()
+	id := statellite.MsgKeys[key]
+	defer statellite.keyLock.Unlock()
+	return id
 }
 
 // --------------------------------------------------------------------------Result----------------------------------------------------------------------------
