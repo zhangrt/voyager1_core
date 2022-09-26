@@ -1,9 +1,10 @@
-package main
+package util
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/zhangrt/voyager1_core/util/validate"
-	"net/http"
 )
 
 func test1(c *gin.Context) {
