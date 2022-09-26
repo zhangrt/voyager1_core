@@ -62,19 +62,19 @@ func TestSer(t *testing.T) {
 		client1 := star.NewTcpClient("127.0.0.1", 8999)
 
 		go func() {
-			star.StatelliteMgrObj.ClientObj[0] = client1
+			star.StatelliteMgrObj.ClientObj["test"] = client1
 			go client1.Start()
 
 		}()
 
 		go func() {
 			for {
-				token := pb.Token{
-					Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
-				}
-
 				uid := uuid.NewV4().String()
 
+				token := pb.Token{
+					Key:   uid,
+					Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
+				}
 				println("UID111111111111111111111111 >>>>>>>>>>>>>", uid)
 
 				// 请求
@@ -101,11 +101,13 @@ func TestSer(t *testing.T) {
 
 		go func() {
 			for {
+				uid := uuid.NewV4().String()
+
 				token := pb.Token{
+					Key:   uid,
 					Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
 				}
 
-				uid := uuid.NewV4().String()
 				println("UID2222222222222222222222222 >>>>>>>>>>>>>", uid)
 
 				// 请求
@@ -132,11 +134,12 @@ func TestSer(t *testing.T) {
 
 		go func() {
 			for {
+				uid := uuid.NewV4().String()
+
 				token := pb.Token{
+					Key:   uid,
 					Token: "adavasdasd",
 				}
-
-				uid := uuid.NewV4().String()
 				println("UID3333333333333333333333 >>>>>>>>>>>>>", uid)
 
 				// 请求

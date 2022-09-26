@@ -26,10 +26,11 @@ type Statellite struct {
 	getTokenLog   sync.RWMutex
 	getPolicyLock sync.RWMutex
 	getUserLock   sync.RWMutex
-	ClientObj     map[int32]*TcpClient
+	ClientObj     map[string]*TcpClient
 }
 
 var (
+	// 提供一个对外的 Statellite 管理句柄，管理所有发送和接收数据
 	StatelliteMgrObj *Statellite
 )
 
@@ -43,7 +44,7 @@ func init() {
 		ResultToken:  make(map[string]*pb.Result), // token验证结果
 		ResultPolicy: make(map[string]*pb.Result), // 权限校验结果
 		ResultUser:   make(map[string]*pb.User),   // 用户信息结果
-		ClientObj:    make(map[int32]*TcpClient),
+		ClientObj:    make(map[string]*TcpClient),
 	}
 }
 

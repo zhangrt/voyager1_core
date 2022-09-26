@@ -7,7 +7,7 @@ type AUTH interface {
 	// 通过token请求鉴权
 	ReadAuthentication(token string) (bool, string, *luna.CustomClaims)
 	// 通过request中的path和method请求验证策略
-	GrantedAuthority(path string, method string) bool
+	GrantedAuthority(authorityId string, path string, method string) bool
 }
 
 func NewAUTH() AUTH {
