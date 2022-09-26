@@ -55,7 +55,8 @@ func JWTAuth() gin.HandlerFunc {
 			newClaims, _ := j.ParseToken(newToken)
 			c.Header(global.G_CONFIG.AUTHKey.RefreshToken, newToken)
 			c.Header(global.G_CONFIG.AUTHKey.RefreshExpiresAt, strconv.FormatInt(newClaims.ExpiresAt, 10))
-			if global.G_CONFIG.System.UseMultipoint {
+			// 单点
+			if !global.G_CONFIG.System.UseMultipoint {
 				RedisJwtToken, err := jwt.GetCacheJWT(newClaims.Account)
 				if err != nil {
 					global.G_LOG.Error("get redis jwt failed", zap.Error(err))

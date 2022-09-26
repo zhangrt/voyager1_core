@@ -1,8 +1,8 @@
-package core
+package luna
 
 import "sync"
 
-// 当前 star 的总管理模块 luna
+// 当前 star 的总管理模块 luna,可以看作是star的一个集合
 type Luna struct {
 	Stars map[int32]*Star //当前在线的Star集合
 	sLock sync.RWMutex    //保护Stars的互斥读写机制

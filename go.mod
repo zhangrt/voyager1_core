@@ -85,6 +85,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gofrs/uuid v4.3.0+incompatible // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/guanguans/id-validator v1.2.8
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/minio/minio-go/v7 v7.0.36

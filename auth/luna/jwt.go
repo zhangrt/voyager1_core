@@ -42,7 +42,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 //@return: redisJWT string, err error
 
 func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err error) {
-	redisJWT, err = redis.GetResult(userName)
+	redisJWT = redis.Get(userName)
 	return redisJWT, err
 }
 
@@ -54,6 +54,6 @@ func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err
 func (jwtService *JwtService) SetCacheJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
 	timer := time.Duration(global.G_CONFIG.JWT.ExpiresTime) * time.Second
-	err = redis.Set(userName, jwt, timer)
+	_ = redis.Set(userName, jwt, timer)
 	return err
 }

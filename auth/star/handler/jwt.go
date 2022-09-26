@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/zhangrt/voyager1_core/auth/star"
+	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_core/global/response"
 
 	"github.com/zhangrt/voyager1_core/global"
@@ -18,6 +22,12 @@ func JWTAuth() gin.HandlerFunc {
 			response.FailWithDetailed(gin.H{"reload": true}, m, c)
 			c.Abort()
 		} else {
+			// refresh token
+			s := strings.Split(m, constant.MARKER)
+			if len(s) > 1 && m == s[0] {
+				c.Header(global.G_CONFIG.AUTHKey.RefreshToken, s[1])
+				c.Header(global.G_CONFIG.AUTHKey.RefreshExpiresAt, strconv.FormatInt(claims.ExpiresAt, 10))
+			}
 			// set claims
 			c.Set(global.G_CONFIG.AUTHKey.User, claims)
 			c.Next()

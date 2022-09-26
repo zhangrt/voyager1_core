@@ -5,25 +5,38 @@ package pb;						        //后期生成go文件的包名
 // token 鉴权
 message Token {
     string token = 1;
+    string key = 2;
 }
 
 // path和method请求验证策略
-message Police {
+message Policy {
     string path = 1;
     string method = 2;
+    string authorityId = 3;
+    string key = 4;
 }
 
 message Result {
     bool success = 1;
     string msg = 2;
     CustomClaims claims = 3;
+    string key = 4;
+}
+
+message HearBeat {
+    int32 id =1;
+}
+
+message Receipe {
+    int32 id =1;
 }
 
 message User {
     int64  userID       = 1;
     string UUID         = 2;
-    string authoryId    = 3;
+    string authorityId    = 3;
     CustomClaims claims = 4;
+    string key = 5;
 }
 
 message CustomClaims {
@@ -35,9 +48,9 @@ message CustomClaims {
 message BaseClaims {
     int64  userID       = 1;
     string UUID         = 2;
-    string authoryId    = 3;
-    string username     = 4;
-    string nickName     = 5;
+    string authorityId    = 3;
+    string account     = 4;
+    string name     = 5;
 }
 
 message StandardClaims {
