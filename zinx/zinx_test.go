@@ -11,9 +11,9 @@ import (
 	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_core/global"
 	"github.com/zhangrt/voyager1_core/zinx/api"
-	"github.com/zhangrt/voyager1_core/zinx/core/luna"
 	"github.com/zhangrt/voyager1_core/zinx/core/star"
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
+	luna "github.com/zhangrt/voyager1_core/zinx/server"
 )
 
 func TestSer(t *testing.T) {
