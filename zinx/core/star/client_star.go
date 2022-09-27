@@ -143,7 +143,8 @@ func (client *TcpClient) Start() {
 	// 处理回执
 	go func() {
 		for {
-			//读取服务端发来的数据 ==》 SyncPID
+
+			//读取服务端发来的数据
 			//1.读取8字节
 			//第一次读取，读取数据头
 			headData := make([]byte, 8)
@@ -185,27 +186,27 @@ func (client *TcpClient) Start() {
 		client.DoBusiness()
 	}()
 
-	go func() {
-		for {
-			if client.isOnline {
-				fmt.Println("Online:::::::::::::::::::::::::::", client.isOnline)
-			} else {
-				fmt.Println("DisOnline :::::::::::::::::::::::::::", client.isOnline)
-				time.Sleep(time.Second)
-			}
-			time.Sleep(time.Second * 10)
-			// select {
-			// case <-client.isOnline:
-			// 	fmt.Println("Online:::::::::::::::::::::::::::", <-client.isOnline)
-			// 	return
-			// }
-			// case <-time.After(time.Second * 30):
-			// 	println("Close Conn >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-			// 	_ = client.conn.Close()
-			// 	return
-			// }
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		if client.isOnline {
+	// 			fmt.Println("Online:::::::::::::::::::::::::::", client.isOnline)
+	// 		} else {
+	// 			fmt.Println("DisOnline :::::::::::::::::::::::::::", client.isOnline)
+	// 			time.Sleep(time.Second)
+	// 		}
+	// 		time.Sleep(time.Second * 10)
+	// 		// select {
+	// 		// case <-client.isOnline:
+	// 		// 	fmt.Println("Online:::::::::::::::::::::::::::", <-client.isOnline)
+	// 		// 	return
+	// 		// }
+	// 		// case <-time.After(time.Second * 30):
+	// 		// 	println("Close Conn >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+	// 		// 	_ = client.conn.Close()
+	// 		// 	return
+	// 		// }
+	// 	}
+	// }()
 
 }
 
