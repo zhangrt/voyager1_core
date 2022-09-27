@@ -2,6 +2,8 @@ package constant
 
 const (
 	MARKER = "&:$"
+	GPRC   = "grpc"
+	TCP    = "tcp"
 )
 
 const (

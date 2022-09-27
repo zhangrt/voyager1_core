@@ -11,10 +11,10 @@ import (
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-// 用户信息接口实现
-type Claimant struct{}
+// 用户信息接口TCP实现
+type ClaimantTcp struct{}
 
-func (claimant *Claimant) GetUser(token string) (*luna.CustomClaims, error) {
+func (claimant *ClaimantTcp) GetUser(token string) (*luna.CustomClaims, error) {
 	var claims *luna.CustomClaims
 	var err error
 	key := SendProtoTokenMsg(token, constant.USER_REQ)
@@ -46,7 +46,7 @@ func (claimant *Claimant) GetUser(token string) (*luna.CustomClaims, error) {
 	return claims, err
 }
 
-func (claimant *Claimant) GetUserID(token string) uint {
+func (claimant *ClaimantTcp) GetUserID(token string) uint {
 	var ID uint
 	claims, err := claimant.GetUser(token)
 	if err != nil {
@@ -55,7 +55,7 @@ func (claimant *Claimant) GetUserID(token string) uint {
 	return ID
 }
 
-func (claimant *Claimant) GetUserUUID(token string) uuid.UUID {
+func (claimant *ClaimantTcp) GetUserUUID(token string) uuid.UUID {
 	var UUID uuid.UUID
 	claims, err := claimant.GetUser(token)
 	if err != nil {
@@ -64,7 +64,7 @@ func (claimant *Claimant) GetUserUUID(token string) uuid.UUID {
 	return UUID
 }
 
-func (claimant *Claimant) GetUserAuthorityId(token string) string {
+func (claimant *ClaimantTcp) GetUserAuthorityId(token string) string {
 	var AuthorityId string
 	claims, err := claimant.GetUser(token)
 	if err != nil {

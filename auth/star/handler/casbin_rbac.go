@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 拦截器
-func CasbinHandler() gin.HandlerFunc {
+// 拦截器 impl 实现类
+func CasbinHandler(impl string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取jwt claims信息
 		claims, e := c.Get(global.G_CONFIG.AUTHKey.User)
@@ -21,7 +21,7 @@ func CasbinHandler() gin.HandlerFunc {
 			obj := c.Request.URL.Path
 			// 获取请求方法
 			act := c.Request.Method
-			success := star.NewAUTH().GrantedAuthority(authorityId, obj, act)
+			success := star.NewAUTH(impl).GrantedAuthority(authorityId, obj, act)
 			if success {
 				c.Next()
 			} else {
