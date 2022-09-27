@@ -27,7 +27,7 @@ func test1(c *gin.Context) {
 	})
 }
 
-func main() {
+func test() {
 	/*	model := validate.TestModel{
 			CreateDate: time.Date(2022, time.July, 20, 0, 0, 0, 0, time.UTC),
 			EndDate:    time.Date(2019, time.July, 20, 0, 0, 0, 0, time.UTC),
