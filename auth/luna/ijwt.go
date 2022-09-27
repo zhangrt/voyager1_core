@@ -33,7 +33,9 @@ func (UnimplementedJwt) JsonInBlacklist(jwtList JwtBlacklist) (err error) {
 	return fmt.Errorf("method JsonInBlacklist not implemented")
 }
 
-func (UnimplementedJwt) IsBlacklist(jwt string) bool
+func (UnimplementedJwt) IsBlacklist(jwt string) bool {
+	return false
+}
 
 func (UnimplementedJwt) GetCacheJWT(userName string) (redisJWT string, err error) {
 	return "", fmt.Errorf("method GetCacheJWT not implemented")
