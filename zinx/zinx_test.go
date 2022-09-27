@@ -59,7 +59,7 @@ func TestSer(t *testing.T) {
 	}
 
 	{
-		client1 := star.NewTcpClient("127.0.0.1", 8999)
+		client1 := star.NewTcpClient("127.0.0.1", 2777)
 
 		go func() {
 			star.StatelliteMgrObj.ClientObj["test"] = client1
@@ -89,6 +89,10 @@ func TestSer(t *testing.T) {
 						println("Key >>>>> ", uid)
 						println("<111111111111111111111111 GetTokenResult Key>: ", r.Key)
 						println("====================== %d =========================", uid == r.Key)
+						if !(uid == r.Key) {
+							println("ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR ", uid)
+							return
+						}
 						star.StatelliteMgrObj.RemoveTokenResult(uid)
 						break
 					}
