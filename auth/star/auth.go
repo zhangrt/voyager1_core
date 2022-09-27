@@ -12,5 +12,5 @@ type AUTH interface {
 
 func NewAUTH() AUTH {
 	// Request impl
-	return &Authentication{}
+	return &AuthenticationTcp{}
 }

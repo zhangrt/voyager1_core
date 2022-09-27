@@ -14,7 +14,7 @@ import (
 // 用户信息接口实现
 type Claimant struct{}
 
-func (claimant *Claimant) GetClaims(token string) (*luna.CustomClaims, error) {
+func (claimant *Claimant) GetUser(token string) (*luna.CustomClaims, error) {
 	var claims *luna.CustomClaims
 	var err error
 	key := SendProtoTokenMsg(token, constant.USER_REQ)
@@ -48,7 +48,7 @@ func (claimant *Claimant) GetClaims(token string) (*luna.CustomClaims, error) {
 
 func (claimant *Claimant) GetUserID(token string) uint {
 	var ID uint
-	claims, err := claimant.GetClaims(token)
+	claims, err := claimant.GetUser(token)
 	if err != nil {
 		ID = claims.ID
 	}
@@ -57,7 +57,7 @@ func (claimant *Claimant) GetUserID(token string) uint {
 
 func (claimant *Claimant) GetUserUUID(token string) uuid.UUID {
 	var UUID uuid.UUID
-	claims, err := claimant.GetClaims(token)
+	claims, err := claimant.GetUser(token)
 	if err != nil {
 		UUID = claims.UUID
 	}
@@ -66,7 +66,7 @@ func (claimant *Claimant) GetUserUUID(token string) uuid.UUID {
 
 func (claimant *Claimant) GetUserAuthorityId(token string) string {
 	var AuthorityId string
-	claims, err := claimant.GetClaims(token)
+	claims, err := claimant.GetUser(token)
 	if err != nil {
 		AuthorityId = claims.AuthorityId
 	}

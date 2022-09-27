@@ -6,7 +6,7 @@ import (
 )
 
 type CLAIM interface {
-	GetClaims(token string) (*luna.CustomClaims, error)
+	GetUser(token string) (*luna.CustomClaims, error)
 	GetUserID(token string) uint
 	GetUserUUID(token string) uuid.UUID
 	GetUserAuthorityId(token string) string
