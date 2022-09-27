@@ -7,7 +7,6 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
-	"github.com/songzhibin97/gkit/cache/local_cache"
 	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_core/global"
 	"github.com/zhangrt/voyager1_core/zinx/api"
@@ -22,10 +21,10 @@ func TestSer(t *testing.T) {
 	global.G_CONFIG.AUTHKey.RefreshToken = "new-token"
 	global.G_CONFIG.System.UseMultipoint = true
 	global.G_CONFIG.JWT.ExpiresTime = 60
-	global.BlackCache = local_cache.NewCache(
-		local_cache.SetDefaultExpire(time.Second * time.Duration(1800)),
-	)
-	global.BlackCache.SetDefault("", struct{}{})
+	// global.BlackCache = local_cache.NewCache(
+	// 	local_cache.SetDefaultExpire(time.Second * time.Duration(1800)),
+	// )
+	// global.BlackCache.SetDefault("", struct{}{})
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	var wg sync.WaitGroup

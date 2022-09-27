@@ -3,16 +3,25 @@ package star
 import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/zhangrt/voyager1_core/auth/luna"
+	"github.com/zhangrt/voyager1_core/constant"
 )
 
 type CLAIM interface {
-	GetClaims(token string) (*luna.CustomClaims, error)
+	GetUser(token string) (*luna.CustomClaims, error)
 	GetUserID(token string) uint
 	GetUserUUID(token string) uuid.UUID
 	GetUserAuthorityId(token string) string
 }
 
-func NewCLAMI() CLAIM {
+func NewCLAMI(impl string) CLAIM {
 
-	return &Claimant{}
+	switch impl {
+	case constant.GPRC:
+		return &ClaimantGrpc{}
+	case constant.TCP:
+		return &ClaimantTcp{}
+	default:
+		return &ClaimantGrpc{}
+	}
+
 }

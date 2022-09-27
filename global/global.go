@@ -1,12 +1,8 @@
 package global
 
 import (
-	"sync"
-
 	"github.com/go-redis/redis/v8"
-	"github.com/songzhibin97/gkit/cache/local_cache"
 	"github.com/spf13/viper"
-	"gorm.io/gorm"
 
 	"golang.org/x/sync/singleflight"
 
@@ -16,8 +12,9 @@ import (
 )
 
 var (
-	G_DB                  *gorm.DB
-	GS_DBList             map[string]*gorm.DB
+	// core 去除 gorm相关代码
+	// G_DB                  *gorm.DB
+	// GS_DBList             map[string]*gorm.DB
 	G_REDIS_STANDALONE    *redis.Client
 	G_REDIS_CLUSTER       *redis.ClusterClient
 	G_REDIS_CLUSTER_MOD   bool
@@ -25,6 +22,6 @@ var (
 	G_VP                  *viper.Viper
 	G_LOG                 *zap.Logger
 	G_Concurrency_Control = &singleflight.Group{}
-	BlackCache            local_cache.Cache
-	lock                  sync.RWMutex
+	// BlackCache            local_cache.Cache
+	// lock sync.RWMutex
 )

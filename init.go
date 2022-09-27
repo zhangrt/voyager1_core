@@ -3,14 +3,12 @@ package gallery
 import (
 	"fmt"
 
-	"github.com/songzhibin97/gkit/cache/local_cache"
 	"github.com/zhangrt/voyager1_core/config"
 	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 )
 
 var (
@@ -34,10 +32,10 @@ func NewInit() *Init {
 	return &Init{}
 }
 
-func (init *Init) DB(db *gorm.DB) *Init {
-	global.G_DB = db
-	return init
-}
+// func (init *Init) DB(db *gorm.DB) *Init {
+// 	global.G_DB = db
+// 	return init
+// }
 
 func (init *Init) SetRedisMod(b bool) *Init {
 	global.G_REDIS_CLUSTER_MOD = b
@@ -66,10 +64,10 @@ func (init *Init) Zap(zap *zap.Logger) *Init {
 	return init
 }
 
-func (init *Init) BlackCache(cache local_cache.Cache) *Init {
-	global.BlackCache = cache
-	return init
-}
+// func (init *Init) BlackCache(cache local_cache.Cache) *Init {
+// 	global.BlackCache = cache
+// 	return init
+// }
 
 func (init *Init) Config(config config.Server) *Init {
 	global.G_CONFIG = config
