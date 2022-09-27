@@ -1,7 +1,14 @@
 package luna
 
 import (
+	"sync"
+
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	auth Casbin
+	once sync.Once
 )
 
 func Enforce(c *gin.Context) (bool, error) {
@@ -17,7 +24,9 @@ func Enforce(c *gin.Context) (bool, error) {
 }
 
 func CheckPolicy(sub string, obj string, act string) (bool, error) {
-	auth := NewCasbin()
+	once.Do(func() {
+		auth = NewCasbin()
+	})
 	e := auth.Casbin()
 	// 判断策略中是否存在
 	success, err := e.Enforce(sub, obj, act)

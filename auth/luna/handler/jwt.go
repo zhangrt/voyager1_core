@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strconv"
+	"sync"
 	"time"
 
 	auth "github.com/zhangrt/voyager1_core/auth/luna"
@@ -13,9 +14,15 @@ import (
 	"go.uber.org/zap"
 )
 
-var jwt = auth.NewJWT()
+var (
+	jwt  auth.JWT
+	once sync.Once
+)
 
 func JWTAuth() gin.HandlerFunc {
+	once.Do(func() {
+		jwt = auth.NewJWT()
+	})
 	return func(c *gin.Context) {
 		// 我们这里jwt鉴权取头部信息 x-token 登录时回返回token信息 这里前端需要把token存储到cookie或者本地localStorage中 不过需要跟后端协商过期时间 可以约定刷新令牌或者重新登录
 		token := c.Request.Header.Get(global.G_CONFIG.AUTHKey.Token)
