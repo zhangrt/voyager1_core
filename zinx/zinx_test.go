@@ -1,4 +1,4 @@
-package main
+package zinx_test
 
 import (
 	"runtime"
@@ -59,7 +59,7 @@ func TestSer(t *testing.T) {
 	}
 
 	{
-		client1 := star.NewTcpClient("127.0.0.1", 2777)
+		client1 := star.NewTcpClient("127.0.0.1", 8999)
 
 		go func() {
 			star.StatelliteMgrObj.ClientObj["test"] = client1
