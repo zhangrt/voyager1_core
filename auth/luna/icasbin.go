@@ -26,6 +26,7 @@ func NewCasbin() Casbin {
 	if c != nil {
 		return c
 	}
+	fmt.Errorf("Interface Casbin not implemented")
 	return c
 }
 

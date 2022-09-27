@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 拦截器 impl 实现类
+// Casbin 拦截器  传入impl选择不同通信方式的接口实现
 func CasbinHandler(impl string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取jwt claims信息
