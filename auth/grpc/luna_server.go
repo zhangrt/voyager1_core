@@ -19,15 +19,22 @@ var lunaLogo = `
  ██         ██      ██   ██    ██    █           █
  ██▄▄▄▄▄▄   ██      ██   ██    ██    █         ▄▄█
  ▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀ ▀   ▀▀    ▀▀    ▀▄▄▄▄▄▀▀▀▀  ▀▄▄
-                                        				`
+                                                        `
+var topLine = `┌───────────────────────────────────────────────────┐`
+var borderLine = `│`
+var bottomLine = `└───────────────────────────────────────────────────┘`
 
 type Server struct {
 	srv pb.AuthServiceServer
 }
 
-func (server *Server) LuanGrpcServer() {
+func NewServer() *Server {
+	return &Server{}
+}
 
-	fmt.Println(lunaLogo)
+func (server *Server) LunchGrpcServer() {
+
+	printLogo()
 
 	s := grpc.NewServer()
 
@@ -45,6 +52,20 @@ func (server *Server) LuanGrpcServer() {
 
 }
 
-func (s *Server) RegisterAuthServiceServer(as pb.AuthServiceServer) {
+func (s *Server) RegisterAuthServiceServer(as pb.AuthServiceServer) *Server {
 	s.srv = as
+	return s
+}
+
+func printLogo() {
+	fmt.Println(lunaLogo)
+	fmt.Println(topLine)
+	v := fmt.Sprintf("%s version:v0.1                                      %s", borderLine, borderLine)
+	e := fmt.Sprintf("%s email:zhoujiajun@gsafety.com                      %s", borderLine, borderLine)
+	fmt.Println(v)
+	fmt.Println(e)
+	fmt.Println(bottomLine)
+	fmt.Printf("[Luna] started at %s, by %s . ",
+		fmt.Sprintf(global.G_CONFIG.Grpc.Server.Host, ":", global.G_CONFIG.Grpc.Server.Port),
+		fmt.Sprintf(global.G_CONFIG.Grpc.Server.Network))
 }
