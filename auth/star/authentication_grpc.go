@@ -6,7 +6,6 @@ import (
 	"github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	util "github.com/zhangrt/voyager1_core/util"
-	"google.golang.org/grpc"
 )
 
 // 授权鉴权接口实现
@@ -16,7 +15,7 @@ func (authentication *AuthenticationGrpc) ReadAuthentication(token string) (bool
 	var r bool
 	var msg string
 	var claims *luna.CustomClaims
-	conn, client := GetGrpcClient(grpc.WithInsecure())
+	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
 	result, err := client.ReadAuthentication(context.Background(), &pb.Token{
 		Token: token,
@@ -32,7 +31,7 @@ func (authentication *AuthenticationGrpc) ReadAuthentication(token string) (bool
 
 func (authentication *AuthenticationGrpc) GrantedAuthority(authorityId string, path string, method string) bool {
 	var r bool
-	conn, client := GetGrpcClient(grpc.WithInsecure())
+	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
 	result, err := client.GrantedAuthority(context.Background(), &pb.Policy{
 		AuthorityId: authorityId,

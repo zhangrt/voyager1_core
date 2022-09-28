@@ -7,7 +7,6 @@ import (
 	"github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/util"
-	"google.golang.org/grpc"
 )
 
 // 用户信息接口GRPC实现
@@ -17,7 +16,7 @@ type ClaimantGrpc struct{}
 func (claimant *ClaimantGrpc) GetUser(token string) (*luna.CustomClaims, error) {
 	var err error
 	claims := new(luna.CustomClaims)
-	conn, client := GetGrpcClient(grpc.WithInsecure())
+	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
 	result, err := client.GetUser(context.Background(), &pb.Token{
 		Token: token,
