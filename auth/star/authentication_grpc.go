@@ -23,7 +23,8 @@ func (authentication *AuthenticationGrpc) ReadAuthentication(token string) (bool
 	if err != nil {
 		msg = err.Error()
 	} else {
-		r = true
+		r = result.Success
+		msg = result.Msg
 		claims = util.GrpcProtoResult2Claims(result)
 	}
 	return r, msg, claims

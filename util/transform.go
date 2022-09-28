@@ -29,6 +29,29 @@ func ZinxProtoUser2Claims(result *zinx_pb.User) *luna.CustomClaims {
 	return ZinxProtoClaimsTransformClaims(result.Claims)
 }
 
+func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.CustomClaims {
+	result := &grpc_pb.CustomClaims{
+		Claims: &grpc_pb.BaseClaims{
+			UserID:      int64(claims.ID),
+			UUID:        claims.UUID.String(),
+			Account:     claims.BaseClaims.Account,
+			Name:        claims.BaseClaims.Name,
+			AuthorityId: claims.BaseClaims.AuthorityId,
+		},
+		BufferTime: claims.BufferTime,
+		Standard: &grpc_pb.StandardClaims{
+			Audience:  claims.StandardClaims.Audience,
+			ExpiresAt: claims.StandardClaims.ExpiresAt,
+			Id:        claims.StandardClaims.Id,
+			IssuedAt:  claims.StandardClaims.IssuedAt,
+			Issuer:    claims.StandardClaims.Issuer,
+			NotBefore: claims.StandardClaims.NotBefore,
+			Subject:   claims.StandardClaims.Subject,
+		},
+	}
+	return result
+}
+
 func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomClaims {
 
 	s := result.Claims.UUID
