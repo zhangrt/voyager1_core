@@ -1,10 +1,14 @@
 package luna
 
 import (
-	"github.com/zhangrt/voyager1_core/global"
+	"sync"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
+)
+
+var (
+	auth Casbin
+	once sync.Once
 )
 
 func Enforce(c *gin.Context) (bool, error) {
@@ -20,21 +24,11 @@ func Enforce(c *gin.Context) (bool, error) {
 }
 
 func CheckPolicy(sub string, obj string, act string) (bool, error) {
-	auth := NewCasbin()
+	once.Do(func() {
+		auth = NewCasbin()
+	})
 	e := auth.Casbin()
 	// 判断策略中是否存在
 	success, err := e.Enforce(sub, obj, act)
 	return success, err
-}
-
-func LoadAll() {
-	var data []string
-	err := global.G_DB.Model(&JwtBlacklist{}).Select("jwt").Find(&data).Error
-	if err != nil {
-		global.G_LOG.Error("加载数据库jwt黑名单失败!", zap.Error(err))
-		return
-	}
-	for i := 0; i < len(data); i++ {
-		global.BlackCache.SetDefault(data[i], struct{}{})
-	} // jwt黑名单 加入 BlackCache 中
 }

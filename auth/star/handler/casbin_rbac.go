@@ -2,15 +2,15 @@ package handler
 
 import (
 	"github.com/zhangrt/voyager1_core/auth/luna"
-	"github.com/zhangrt/voyager1_core/auth/star"
 	"github.com/zhangrt/voyager1_core/global"
 	"github.com/zhangrt/voyager1_core/global/response"
 
 	"github.com/gin-gonic/gin"
 )
 
-// 拦截器
-func CasbinHandler() gin.HandlerFunc {
+// Casbin 拦截器  传入impl选择不同通信方式的接口实现
+func CasbinHandler(impl string) gin.HandlerFunc {
+
 	return func(c *gin.Context) {
 		// 获取jwt claims信息
 		claims, e := c.Get(global.G_CONFIG.AUTHKey.User)
@@ -21,7 +21,7 @@ func CasbinHandler() gin.HandlerFunc {
 			obj := c.Request.URL.Path
 			// 获取请求方法
 			act := c.Request.Method
-			success := star.NewAUTH().GrantedAuthority(authorityId, obj, act)
+			success := auth.GrantedAuthority(authorityId, obj, act)
 			if success {
 				c.Next()
 			} else {

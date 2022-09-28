@@ -12,9 +12,9 @@ import (
 )
 
 // 授权鉴权接口实现
-type Authentication struct{}
+type AuthenticationTcp struct{}
 
-func (authentication *Authentication) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
+func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
 	var msg string
 	var claims *luna.CustomClaims
 	key := SendProtoTokenMsg(token, constant.TOKEN_REQ)
@@ -41,12 +41,12 @@ func (authentication *Authentication) ReadAuthentication(token string) (bool, st
 	}
 	msg = "ReadAuthentication Success"
 
-	claims = util.ProtoResultTransformClaims(result)
+	claims = util.ZinxProtoResult2Claims(result)
 
 	return true, msg, claims
 }
 
-func (authentication *Authentication) GrantedAuthority(authorityId string, path string, method string) bool {
+func (authentication *AuthenticationTcp) GrantedAuthority(authorityId string, path string, method string) bool {
 	var r bool
 	key := SendProtoPolicyMsg(authorityId, path, method, constant.POLICY_REQ)
 

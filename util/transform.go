@@ -6,21 +6,60 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	uuid "github.com/satori/go.uuid"
+	grpc_pb "github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
-	pb "github.com/zhangrt/voyager1_core/zinx/pb"
+	zinx_pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-func ProtoResultTransformClaims(result *pb.Result) *luna.CustomClaims {
+func ZinxProtoResult2Claims(result *zinx_pb.Result) *luna.CustomClaims {
 
-	return ProtoClaimsTransformClaims(result.Claims)
+	return ZinxProtoClaimsTransformClaims(result.Claims)
 }
 
-func ProtoUserTransformClaims(result *pb.User) *luna.CustomClaims {
-
-	return ProtoClaimsTransformClaims(result.Claims)
+func GrpcProtoResult2Claims(result *grpc_pb.Result) *luna.CustomClaims {
+	return GrpcProtoClaimsTransformClaims(result.Claims)
 }
 
-func ProtoClaimsTransformClaims(result *pb.CustomClaims) *luna.CustomClaims {
+func GrpcProtoUser2Claims(result *grpc_pb.User) *luna.CustomClaims {
+	return GrpcProtoClaimsTransformClaims(result.Claims)
+}
+
+func ZinxProtoUser2Claims(result *zinx_pb.User) *luna.CustomClaims {
+
+	return ZinxProtoClaimsTransformClaims(result.Claims)
+}
+
+func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomClaims {
+
+	s := result.Claims.UUID
+
+	bys := String2BytesSlicePlus(s)
+
+	claims := &luna.CustomClaims{
+		BaseClaims: luna.BaseClaims{
+			ID:          uint(result.Claims.UserID),
+			UUID:        uuid.FromBytesOrNil(bys),
+			Account:     result.Claims.Account,
+			Name:        result.Claims.Name,
+			AuthorityId: result.Claims.AuthorityId,
+		},
+		BufferTime: result.BufferTime,
+		StandardClaims: jwt.StandardClaims{
+			Audience:  result.Standard.Audience,
+			ExpiresAt: result.Standard.ExpiresAt,
+			Id:        result.Standard.Id,
+			IssuedAt:  result.Standard.IssuedAt,
+			Issuer:    result.Standard.Issuer,
+			NotBefore: result.Standard.NotBefore,
+			Subject:   result.Standard.Subject,
+		},
+	}
+
+	return claims
+}
+
+func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomClaims {
+
 	s := result.Claims.UUID
 
 	bys := String2BytesSlicePlus(s)
