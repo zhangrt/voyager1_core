@@ -10,7 +10,7 @@ import (
 )
 
 func GetGrpcClient(opts ...grpc.DialOption) (*grpc.ClientConn, pb.AuthServiceClient) {
-	conn, err := grpc.Dial(fmt.Sprintf(global.G_CONFIG.Grpc.Client.Host, ":", global.G_CONFIG.Grpc.Client.Port), opts)
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Client.Host, global.G_CONFIG.Grpc.Client.Port), opts)
 	if err != nil {
 		log.Fatal(err)
 		return nil, nil
