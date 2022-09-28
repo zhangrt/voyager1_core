@@ -20,4 +20,4 @@
 
 * cd zinx/pb
 
-* protoc --go_out=. auth.proto
+* protoc --go_out=. zinx.proto
