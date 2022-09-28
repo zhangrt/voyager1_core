@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-func GetGrpcClient(opts ...grpc.DialOption) (*grpc.ClientConn, pb.AuthServiceClient) {
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Client.Host, global.G_CONFIG.Grpc.Client.Port), opts)
+func GetGrpcClient() (*grpc.ClientConn, pb.AuthServiceClient) {
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Client.Host, global.G_CONFIG.Grpc.Client.Port), grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 		return nil, nil
