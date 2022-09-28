@@ -39,7 +39,7 @@ func (server *Server) LunchGrpcServer() {
 	s := grpc.NewServer()
 
 	lis, _ := net.Listen(global.G_CONFIG.Grpc.Server.Network,
-		fmt.Sprintf(global.G_CONFIG.Grpc.Server.Host, ":", global.G_CONFIG.Grpc.Server.Port))
+		fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Server.Host, global.G_CONFIG.Grpc.Server.Port))
 
 	if server.srv != nil {
 		pb.RegisterAuthServiceServer(s, server.srv)
@@ -65,7 +65,9 @@ func printLogo() {
 	fmt.Println(v)
 	fmt.Println(e)
 	fmt.Println(bottomLine)
+
 	fmt.Printf("[Luna] started at %s, by %s . ",
-		fmt.Sprintf(global.G_CONFIG.Grpc.Server.Host, ":", global.G_CONFIG.Grpc.Server.Port),
+		fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Server.Host, global.G_CONFIG.Grpc.Server.Port),
 		fmt.Sprintf(global.G_CONFIG.Grpc.Server.Network))
+	fmt.Println()
 }
