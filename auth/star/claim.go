@@ -13,6 +13,7 @@ type CLAIM interface {
 	GetUserAuthorityId(token string) string
 }
 
+// 通过传入实现类型返回不同的接口实现
 func NewCLAMI(impl string) CLAIM {
 
 	switch impl {
@@ -24,4 +25,9 @@ func NewCLAMI(impl string) CLAIM {
 		return &ClaimantGrpc{}
 	}
 
+}
+
+// 直接返回接口实现
+func NewClami(c CLAIM) CLAIM {
+	return c
 }
