@@ -15,6 +15,7 @@ var (
 	InitAuthKey bool
 )
 
+// 初始化配置信息
 type Init struct{}
 
 func NewInit() *Init {
@@ -102,5 +103,10 @@ func (init *Init) ConfigMinio(c config.Minio) *Init {
 
 func (init *Init) ConfigZinx(c config.Zinx) *Init {
 	global.G_CONFIG.Zinx = c
+	return init
+}
+
+func (init *Init) ConfigGrpc(c config.Grpc) *Init {
+	global.G_CONFIG.Grpc = c
 	return init
 }

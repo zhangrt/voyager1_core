@@ -41,7 +41,7 @@ func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool,
 	}
 	msg = "ReadAuthentication Success"
 
-	claims = util.ProtoResultTransformClaims(result)
+	claims = util.ZinxProtoResult2Claims(result)
 
 	return true, msg, claims
 }

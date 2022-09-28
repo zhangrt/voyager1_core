@@ -41,7 +41,7 @@ func (claimant *ClaimantTcp) GetUser(token string) (*luna.CustomClaims, error) {
 			return nil, err
 		}
 	}
-	claims = util.ProtoUserTransformClaims(user)
+	claims = util.ZinxProtoUser2Claims(user)
 
 	return claims, err
 }

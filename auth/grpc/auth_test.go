@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"sync"
 	"testing"
-	"time"
 
 	uuid "github.com/satori/go.uuid"
 	pb "github.com/zhangrt/voyager1_core/auth/grpc/pb"
@@ -51,16 +50,14 @@ func TestAuth(t *testing.T) {
 
 	{
 		go func() {
-			time.Sleep(time.Second * 3)
-			conn, err := grpc.Dial("127.0.0.1:8081", grpc.WithInsecure())
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer conn.Close()
-
-			authClient := pb.NewAuthServiceClient(conn)
+			// time.Sleep(time.Second * 3)
 
 			for {
+				conn, err := grpc.Dial("127.0.0.1:8081", grpc.WithInsecure())
+				if err != nil {
+					log.Fatal(err)
+				}
+				authClient := pb.NewAuthServiceClient(conn)
 				j := luna.NewTOKEN() // 唯一签名
 				claims := j.CreateClaims(luna.BaseClaims{
 					UUID:        uuid.NewV4(),
@@ -71,6 +68,9 @@ func TestAuth(t *testing.T) {
 					Authority:   nil,
 				})
 				token, err := j.CreateToken(claims)
+				if err != nil {
+					continue
+				}
 				res, err := authClient.GetUser(context.Background(), &pb.Token{
 					Token: token,
 				})
@@ -78,8 +78,9 @@ func TestAuth(t *testing.T) {
 					log.Fatal(err)
 				}
 				fmt.Println(res)
+				conn.Close()
 
-				time.Sleep(time.Second * 5)
+				// time.Sleep(time.Second * 5)
 			}
 
 		}()
