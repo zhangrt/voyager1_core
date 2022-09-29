@@ -9,6 +9,7 @@ import (
 )
 
 // Casbin 拦截器  传入impl选择不同通信方式的接口实现
+// 集成star的star服务可以使用此默认Handler也可以根据特定业务逻辑调用提供的Auth接口自己实现
 func CasbinHandler(impl string) gin.HandlerFunc {
 
 	return func(c *gin.Context) {

@@ -6,7 +6,7 @@ import (
 	"github.com/casbin/casbin/v2"
 )
 
-// 权限接口
+// 权限接口 在这里不提供实现接口，由调用者实现
 type Casbin interface {
 	// 更新casbin权限
 	UpdateCasbin(authorityId string, casbinInfos []CasbinInfo) error

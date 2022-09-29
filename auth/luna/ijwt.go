@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// 权限接口
+// 权限接口 不提供实现接口，由调用方实现
 type JWT interface {
 	JsonInBlacklist(jwtList JwtBlacklist) (err error)
 	IsBlacklist(jwt string) bool

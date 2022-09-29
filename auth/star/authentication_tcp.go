@@ -11,7 +11,7 @@ import (
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-// 授权鉴权接口实现
+// 授权鉴权接口Zinx的实现
 type AuthenticationTcp struct{}
 
 func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {

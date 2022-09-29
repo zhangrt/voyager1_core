@@ -1,5 +1,7 @@
 package util
 
+// 数据结构体之间转化的工具方法
+
 import (
 	"reflect"
 	"unsafe"
@@ -30,6 +32,9 @@ func ZinxProtoUser2Claims(result *zinx_pb.User) *luna.CustomClaims {
 }
 
 func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.CustomClaims {
+	if claims == nil {
+		return nil
+	}
 	result := &grpc_pb.CustomClaims{
 		Claims: &grpc_pb.BaseClaims{
 			UserID:      int64(claims.ID),
@@ -53,7 +58,9 @@ func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.Cust
 }
 
 func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomClaims {
-
+	if result == nil {
+		return nil
+	}
 	s := result.Claims.UUID
 
 	bys := String2BytesSlicePlus(s)
@@ -82,7 +89,9 @@ func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomCl
 }
 
 func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomClaims {
-
+	if result == nil {
+		return nil
+	}
 	s := result.Claims.UUID
 
 	bys := String2BytesSlicePlus(s)

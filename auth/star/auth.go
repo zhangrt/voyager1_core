@@ -13,7 +13,7 @@ type AUTH interface {
 	GrantedAuthority(authorityId string, path string, method string) bool
 }
 
-// 通过传入实现类型返回不用的接口实现，impl => 1. grpc(tcp、udp...)、 2. tcp
+// 通过传入实现类型返回默认的接口实现，impl => 1. grpc(tcp、udp...)、 2. tcp
 func NewAUTH(impl string) AUTH {
 	switch impl {
 	case constant.GPRC:
@@ -25,7 +25,7 @@ func NewAUTH(impl string) AUTH {
 	}
 }
 
-// 直接返回实现的接口
+// 2、通过注入的方式直接返回实现的接口
 func NewAuth(a AUTH) AUTH {
 	return a
 }

@@ -11,6 +11,8 @@ var (
 	once sync.Once
 )
 
+// 校验用户角色的Policy
+
 func Enforce(c *gin.Context) (bool, error) {
 	waitUse, _ := GetClaims(c)
 	// 获取请求的PATH

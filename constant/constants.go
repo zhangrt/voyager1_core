@@ -1,11 +1,14 @@
 package constant
 
+// 常量
+
 const (
 	MARKER = "&:$"
 	GPRC   = "grpc"
 	TCP    = "tcp"
 )
 
+// Zinx
 const (
 	TOKEN_REQ  = 1
 	POLICY_REQ = 2

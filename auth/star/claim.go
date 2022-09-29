@@ -6,6 +6,7 @@ import (
 	"github.com/zhangrt/voyager1_core/constant"
 )
 
+// 获取用户信息接口
 type CLAIM interface {
 	GetUser(token string) (*luna.CustomClaims, error)
 	GetUserID(token string) uint

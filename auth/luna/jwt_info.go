@@ -21,9 +21,9 @@ type CustomClaims struct {
 
 // v0.2 针对基础业务做补充，增加部门id、单位id等
 type BaseClaims struct {
-	// UUID
+	// UUID 标准通用的uuid
 	UUID uuid.UUID
-	// ID
+	// ID 一般对应于数组库默认的自增主键
 	ID uint
 	// 用户名
 	Account string

@@ -8,7 +8,7 @@ import (
 	util "github.com/zhangrt/voyager1_core/util"
 )
 
-// 授权鉴权接口实现
+// 授权鉴权接口Grpc的实现
 type AuthenticationGrpc struct{}
 
 func (authentication *AuthenticationGrpc) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {

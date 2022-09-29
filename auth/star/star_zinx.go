@@ -8,6 +8,7 @@ import (
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
+// 需要重构 增加错误重试重连等机制
 func StartClient() {
 	client := star.NewTcpClient(global.G_CONFIG.Zinx.Host, global.G_CONFIG.Zinx.TcpPort)
 

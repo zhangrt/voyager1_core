@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// Token 结构体
 type TOKEN struct {
 	SigningKey []byte
 }

@@ -21,6 +21,7 @@ var (
 
 // 拦截器顺序 ——> JWT ——> Casbin ——>
 // JWT拦截器 传入impl选择不同通信方式的接口实现
+// star服务可使用此默认handler，也可依据特殊业务通过提供的Auth接口自行实现
 func JWTAuth(impl string) gin.HandlerFunc {
 	once.Do(func() {
 		auth = star.NewAUTH(impl)

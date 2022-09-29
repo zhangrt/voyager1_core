@@ -15,17 +15,22 @@ import (
 	"context"
 )
 
+// 懒加载初始化
 var (
 	jwt    luna.JWT
 	casbin luna.Casbin
 	once   sync.Once
 )
 
+// Grpc Server 接口实现
 // AuthService 接口实现，需要依赖注入luna.JWT luna.Casbin
+// JWT、Casbin的接口实现由调用方注入
 type AuthService struct {
+	// grpc 必须继承这个proto接口 并进行实现
 	pb.UnimplementedAuthServiceServer
 }
 
+// 读取Token验证Token合法性与过期时间校验
 func (auth *AuthService) ReadAuthentication(c context.Context, p *pb.Token) (*pb.Result, error) {
 	once.Do(func() {
 		jwt = luna.NewJWT()
@@ -84,6 +89,7 @@ func (auth *AuthService) ReadAuthentication(c context.Context, p *pb.Token) (*pb
 	return result, nil
 }
 
+// 通过Casbin校验角色权限 - authorityId、path、method
 func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.Result, error) {
 	once.Do(func() {
 		casbin = luna.NewCasbin()
@@ -95,38 +101,16 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 	return result, err
 
 }
+
+// 通过Token获取用户信息
 func (auth *AuthService) GetUser(c context.Context, p *pb.Token) (*pb.User, error) {
 	user := new(pb.User)
 	claims, _ := luna.GetUser(p.Token)
 	if claims != nil {
-		user.Claims = protoTransformClaims(claims)
+		user.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
 		user.UserID = int64(claims.ID)
 		user.UUID = claims.UUID.String()
 		user.AuthorityId = claims.AuthorityId
 	}
 	return user, nil
-}
-
-// 转换
-func protoTransformClaims(c *luna.CustomClaims) *pb.CustomClaims {
-	p := pb.CustomClaims{
-		Claims: &pb.BaseClaims{
-			UserID:      int64(c.BaseClaims.ID),
-			UUID:        c.BaseClaims.UUID.String(),
-			AuthorityId: c.BaseClaims.AuthorityId,
-			Account:     c.BaseClaims.Account,
-			Name:        c.BaseClaims.Name,
-		},
-		BufferTime: c.BufferTime,
-		Standard: &pb.StandardClaims{
-			Audience:  c.StandardClaims.Audience,
-			ExpiresAt: c.StandardClaims.ExpiresAt,
-			Id:        c.StandardClaims.Id,
-			IssuedAt:  c.StandardClaims.IssuedAt,
-			Issuer:    c.StandardClaims.Issuer,
-			NotBefore: c.StandardClaims.NotBefore,
-			Subject:   c.StandardClaims.Subject,
-		},
-	}
-	return &p
 }
