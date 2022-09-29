@@ -70,7 +70,7 @@ func TestGrpc(t *testing.T) {
 			}
 			fmt.Println(r)
 			star.CloseConn(conn)
-			time.Sleep(time.Second)
+			// time.Sleep(time.Second)
 		}
 	}()
 	wg.Wait()

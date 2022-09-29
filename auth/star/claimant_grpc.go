@@ -22,7 +22,7 @@ func (claimant *ClaimantGrpc) GetUser(token string) (*luna.CustomClaims, error) 
 		Token: token,
 	})
 	if err != nil {
-		return nil, err
+		return claims, err
 	}
 	claims = util.GrpcProtoUser2Claims(result)
 	return claims, err
