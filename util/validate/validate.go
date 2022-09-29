@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
@@ -149,11 +150,6 @@ var cfg *Config
 
 // 读取配置文件
 func ParseConfig(filename string) (*Config, error) {
-	/*	ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		expath := filepath.Dir(ex)*/
 	expath, _ := os.Getwd()
 	file, err := os.Open(expath + "/util/validate/" + filename)
 	defer file.Close()
@@ -170,4 +166,50 @@ func ParseConfig(filename string) (*Config, error) {
 
 func GetConfig() *Config {
 	return cfg
+}
+
+// 定义中间件
+func ValidateMiddleWare() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//model:=c.Request.Form
+		zhT := zh.New()
+		enT := en.New()
+		uni := ut.New(zhT, zhT, enT)
+		//locale,_ := c.Get("lang") //todo
+		locale := "zh"
+		trans, _ := uni.GetTranslator(locale)
+		validate := validator.New()
+		// 注册自定义校验规则
+		validate.RegisterValidation("beforeCurrentDate", beforeCurrentDate)
+		validate.RegisterValidation("isCardId", isCardId)
+		validate.RegisterValidation("isPhoneNo", isPhoneNo)
+		validate.RegisterValidation("isPassportNo", isPassportNo)
+		// 注册翻译器
+		switch locale {
+		case "zh":
+			zhTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("comment")
+			})
+			ParseConfig("validate_zh.json")
+		case "en":
+			enTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("en_comment")
+			})
+			ParseConfig("validate_en.json")
+		default:
+			zhTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("comment")
+			})
+		}
+		RegisterDate(validate, trans, GetConfig().BeforeCurrentDate)
+		RegisterCardId(validate, trans, GetConfig().ErrorInfo)
+		RegisterPhoneNo(validate, trans, GetConfig().ErrorInfo)
+		RegisterPassportNo(validate, trans, GetConfig().ErrorInfo)
+		//validate.Struct(model)
+		c.Set("validateRegister", validate)
+		c.Set("translate", trans)
+	}
 }
