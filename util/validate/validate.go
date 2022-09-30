@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
+	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -12,6 +13,8 @@ import (
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 	idvalidator "github.com/guanguans/id-validator"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 	"os"
 	"reflect"
 	"regexp"
@@ -168,7 +171,7 @@ func GetConfig() *Config {
 	return cfg
 }
 
-// 定义中间件
+// 定义中间件-校验
 func ValidateMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//model:=c.Request.Form
@@ -176,7 +179,7 @@ func ValidateMiddleWare() gin.HandlerFunc {
 		enT := en.New()
 		uni := ut.New(zhT, zhT, enT)
 		//locale,_ := c.Get("lang") //todo
-		locale := "zh"
+		locale := "en"
 		trans, _ := uni.GetTranslator(locale)
 		validate := validator.New()
 		// 注册自定义校验规则
@@ -191,25 +194,58 @@ func ValidateMiddleWare() gin.HandlerFunc {
 			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 				return field.Tag.Get("comment")
 			})
-			ParseConfig("validate_zh.json")
 		case "en":
 			enTranslations.RegisterDefaultTranslations(validate, trans)
 			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 				return field.Tag.Get("en_comment")
 			})
-			ParseConfig("validate_en.json")
 		default:
 			zhTranslations.RegisterDefaultTranslations(validate, trans)
 			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 				return field.Tag.Get("comment")
 			})
 		}
-		RegisterDate(validate, trans, GetConfig().BeforeCurrentDate)
-		RegisterCardId(validate, trans, GetConfig().ErrorInfo)
-		RegisterPhoneNo(validate, trans, GetConfig().ErrorInfo)
-		RegisterPassportNo(validate, trans, GetConfig().ErrorInfo)
+		dateinfo := I18nInit(locale, "before_current_date")
+		errinfo := I18nInit(locale, "error_info")
+		RegisterDate(validate, trans, dateinfo)
+		RegisterCardId(validate, trans, errinfo)
+		RegisterPhoneNo(validate, trans, errinfo)
+		RegisterPassportNo(validate, trans, errinfo)
 		//validate.Struct(model)
 		c.Set("validateRegister", validate)
 		c.Set("translate", trans)
 	}
+}
+
+func I18nInit(lang string, wordId string) string {
+	var bundle *i18n.Bundle
+	var localizer *i18n.Localizer
+	switch lang {
+	case "zh":
+		bundle = i18n.NewBundle(language.Chinese)
+	case "en":
+		bundle = i18n.NewBundle(language.English)
+	default:
+		bundle = i18n.NewBundle(language.Chinese)
+	}
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	expath, _ := os.Getwd()
+	switch lang {
+	case "zh":
+		bundle.MustLoadMessageFile(expath + "/i18n/zh.toml")
+		localizer = i18n.NewLocalizer(bundle, "zh")
+	case "en":
+		bundle.MustLoadMessageFile(expath + "/i18n/en.toml")
+		localizer = i18n.NewLocalizer(bundle, "en")
+	default:
+		bundle.MustLoadMessageFile(expath + "/i18n/zh.toml")
+		localizer = i18n.NewLocalizer(bundle, "zh")
+	}
+	str := localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: wordId,
+		},
+	})
+	//return localizer
+	return str
 }

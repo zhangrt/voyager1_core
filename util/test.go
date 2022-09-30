@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -41,6 +42,9 @@ func test1(c *gin.Context) {
 
 func main() {
 	route := gin.Default()
+	// 测试国际化方法
+	date := validate.I18nInit("zh", "before_current_date")
+	fmt.Println("---------", date)
 	// 注册中间件
 	route.Use(validate.ValidateMiddleWare())
 	route.POST("/test", test1)
