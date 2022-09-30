@@ -1,11 +1,10 @@
 package util
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
+	sui18n "github.com/suisrc/gin-i18n"
 	"github.com/zhangrt/voyager1_core/util/validate"
+	"golang.org/x/text/language"
 	"net/http"
 )
 
@@ -19,18 +18,10 @@ func test1(c *gin.Context) {
 	}*/
 	req := &validate.TestModel{}
 	c.ShouldBind(req)
-	val, _ := c.Get("validateRegister")
-	err := val.(*validator.Validate).Struct(req)
-	if err != nil {
-		trans, _ := c.Get("translate")
-		errs := err.(validator.ValidationErrors)
-		returnErrs := []validate.ReturnModel{}
-		for _, e := range errs {
-			returnModel := validate.ReturnModel{Field: e.StructField(), Message: e.Translate(trans.(ut.Translator))}
-			returnErrs = append(returnErrs, returnModel)
-		}
+	returnValues := validate.GetReturnValue(c, req)
+	if returnValues != nil {
 		c.JSON(404, gin.H{
-			"msg": returnErrs,
+			"msg": returnValues,
 		})
 		return
 	}
@@ -42,9 +33,18 @@ func test1(c *gin.Context) {
 
 func main() {
 	route := gin.Default()
-	// 测试国际化方法
-	date := validate.I18nInit("zh", "before_current_date")
-	fmt.Println("---------", date)
+	/*	// 测试国际化方法
+		date := validate.I18nInit("zh", "before_current_date")
+		fmt.Println("---------", date)*/
+	//在总路由中多语言初始化---国际化中间件
+	bundle := sui18n.NewBundle(
+		language.Chinese, //默认中文
+		"i18n/zh.toml",
+		"i18n/en.toml",
+	)
+	route.Use(sui18n.Serve(bundle))
+	//多语言end,添加在具体的路由实例化之前
+
 	// 注册中间件
 	route.Use(validate.ValidateMiddleWare())
 	route.POST("/test", test1)

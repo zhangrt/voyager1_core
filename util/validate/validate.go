@@ -14,6 +14,7 @@ import (
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 	idvalidator "github.com/guanguans/id-validator"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	sui18n "github.com/suisrc/gin-i18n"
 	"golang.org/x/text/language"
 	"os"
 	"reflect"
@@ -175,11 +176,9 @@ func GetConfig() *Config {
 func ValidateMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//model:=c.Request.Form
-		zhT := zh.New()
-		enT := en.New()
-		uni := ut.New(zhT, zhT, enT)
-		//locale,_ := c.Get("lang") //todo
-		locale := "en"
+		uni := ut.New(zh.New(), en.New())
+		//locale,_ := c.Request.FormValue("lang") //todo
+		locale := "zh"
 		trans, _ := uni.GetTranslator(locale)
 		validate := validator.New()
 		// 注册自定义校验规则
@@ -205,8 +204,10 @@ func ValidateMiddleWare() gin.HandlerFunc {
 				return field.Tag.Get("comment")
 			})
 		}
-		dateinfo := I18nInit(locale, "before_current_date")
-		errinfo := I18nInit(locale, "error_info")
+		//dateinfo := I18nInit(locale, "before_current_date")
+		//errinfo := I18nInit(locale, "error_info")
+		dateinfo := sui18n.FormatText(c, &sui18n.Message{ID: "before_current_date"})
+		errinfo := sui18n.FormatText(c, &sui18n.Message{ID: "error_info"})
 		RegisterDate(validate, trans, dateinfo)
 		RegisterCardId(validate, trans, errinfo)
 		RegisterPhoneNo(validate, trans, errinfo)
@@ -214,6 +215,7 @@ func ValidateMiddleWare() gin.HandlerFunc {
 		//validate.Struct(model)
 		c.Set("validateRegister", validate)
 		c.Set("translate", trans)
+		c.Next()
 	}
 }
 
@@ -248,4 +250,21 @@ func I18nInit(lang string, wordId string) string {
 	})
 	//return localizer
 	return str
+}
+
+// 处理返回值格式
+func GetReturnValue(c *gin.Context, model interface{}) any {
+	val, _ := c.Get("validateRegister")
+	err := val.(*validator.Validate).Struct(model)
+	if err != nil {
+		trans, _ := c.Get("translate")
+		errs := err.(validator.ValidationErrors)
+		returnErrs := []ReturnModel{}
+		for _, e := range errs {
+			returnModel := ReturnModel{Field: e.StructField(), Message: e.Translate(trans.(ut.Translator))}
+			returnErrs = append(returnErrs, returnModel)
+		}
+		return returnErrs
+	}
+	return nil
 }
