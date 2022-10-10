@@ -16,7 +16,8 @@ type GS_BASE_MODEL struct {
 	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
 	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
 	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
-	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
+	Deleted       int            `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
 }
 
 // v0.2 针对基础业务做封装，被上层业务user结构体引用
