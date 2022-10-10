@@ -8,6 +8,10 @@ const (
 	TCP    = "tcp"
 )
 
+const (
+	CACHE_TOKEN_PREFIX = "$token:"
+)
+
 // Zinx
 const (
 	TOKEN_REQ  = 1
