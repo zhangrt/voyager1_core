@@ -9,10 +9,14 @@ import (
 )
 
 type GS_BASE_MODEL struct {
-	ID        uint           `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
-	CreatedAt time.Time      `json:"createdAt" form:"createdAt"`            // 创建时间
-	UpdatedAt time.Time      `json:"updatedAt" form:"updatedAt"`            // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`                        // 删除时间
+	ID            uint           `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
+	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
+	Creator       string         `json:"creator"  gorm:"comment:创建人"`
+	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
+	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
+	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
 }
 
 // v0.2 针对基础业务做封装，被上层业务user结构体引用
@@ -32,23 +36,35 @@ type GS_BASE_USER struct {
 	// 用户头像
 	HeaderImg string `json:"headerImg" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"`
 	// 权限ID
-	AuthorityId string `json:"authorityId" gorm:"default:888;comment:用户角色ID"`
+	RoleId string `json:"roleId" gorm:"default:888;comment:用户角色ID"`
 	// 部门Id
 	DepartMentId string `json:"departmentId" gorm:"default:11111;comment:部门ID"`
 	// 部门名称
 	DepartMentName string `json:"departmentName" gorm:"default:综管部;comment:部门名称"`
 	// 单位Id
-	UnitId string `json:"unitId" gorm:"default:888;comment:单位ID"`
+	OrganizationId string `json:"organizationId" gorm:"default:888;comment:单位ID"`
 	// 单位名称
-	UnitName string `json:"unitName" gorm:"default:888;comment:单位名称"`
+	OrganizationName string `json:"organizationName" gorm:"default:888;comment:单位名称"`
 	// 用户手机号
 	Phone string `json:"phone"  gorm:"comment:用户手机号"`
 	// 用户邮箱
 	Email string `json:"email"  gorm:"comment:用户邮箱"`
-
-	// gorm会默认更新的字段
-
-	CreatedAt time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
-	UpdatedAt time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
+	// 用户锁定
+	Locked int `json:"locked"  gorm:"column:locked;size:1;comment:用户锁定"`
+	// 锁定时间
+	LockTime time.Time `json:"lockTime"  gorm:"column:lock_time;comment:用户锁定时间"`
+	// 最后一次登录时间
+	LastLoginTime time.Time `json:"lastLoginTime"  gorm:"comment:最后一次登录时间"`
+	// 描述
+	Description string `json:"description"  gorm:"comment:用户描述"`
+	// 创建人id
+	CreatorId string `json:"creator_id"  gorm:"comment:创建人id"`
+	// 创建人
+	Creator string `json:"creator"  gorm:"comment:创建人"`
+	// 创建时间
+	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
+	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
+	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
 }

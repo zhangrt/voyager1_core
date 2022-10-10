@@ -24,7 +24,7 @@ var (
 
 // Grpc Server 接口实现
 // AuthService 接口实现，需要依赖注入luna.JWT luna.Casbin
-// JWT、Casbin的接口实现由调用方注入
+// JWT、Casbin的接口实现在GRPC服务启动前注入
 type AuthService struct {
 	// grpc 必须继承这个proto接口 并进行实现
 	pb.UnimplementedAuthServiceServer
