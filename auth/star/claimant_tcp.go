@@ -68,7 +68,7 @@ func (claimant *ClaimantTcp) GetUserAuthorityId(token string) string {
 	var AuthorityId string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		AuthorityId = claims.AuthorityId
+		AuthorityId = claims.RoleId
 	}
 	return AuthorityId
 }

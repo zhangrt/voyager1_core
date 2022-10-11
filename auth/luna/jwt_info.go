@@ -30,17 +30,17 @@ type BaseClaims struct {
 	// 昵称
 	Name string
 	// 权限ID
-	AuthorityId string
+	RoleId string
 	// 权限信息
-	Authority interface{}
+	Role interface{}
 	// 权限信息
-	Authorities []interface{}
+	Roles []interface{}
 	// 部门Id
 	DepartMentId string
 	// 部门名称
 	DepartMentName string
-	// 单位Id
-	UnitId string
-	// 单位名称
-	UnitName string
+	// 组织机构ID
+	OrganizationId string
+	// 组织机构名称
+	OrganizationName string
 }

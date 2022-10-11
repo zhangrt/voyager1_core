@@ -41,7 +41,7 @@ func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.Cust
 			UUID:        claims.UUID.String(),
 			Account:     claims.BaseClaims.Account,
 			Name:        claims.BaseClaims.Name,
-			AuthorityId: claims.BaseClaims.AuthorityId,
+			AuthorityId: claims.BaseClaims.RoleId,
 		},
 		BufferTime: claims.BufferTime,
 		Standard: &grpc_pb.StandardClaims{
@@ -67,11 +67,11 @@ func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomCl
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:          uint(result.Claims.UserID),
-			UUID:        uuid.FromBytesOrNil(bys),
-			Account:     result.Claims.Account,
-			Name:        result.Claims.Name,
-			AuthorityId: result.Claims.AuthorityId,
+			ID:      uint(result.Claims.UserID),
+			UUID:    uuid.FromBytesOrNil(bys),
+			Account: result.Claims.Account,
+			Name:    result.Claims.Name,
+			RoleId:  result.Claims.AuthorityId,
 		},
 		BufferTime: result.BufferTime,
 		StandardClaims: jwt.StandardClaims{
@@ -98,11 +98,11 @@ func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomCl
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:          uint(result.Claims.UserID),
-			UUID:        uuid.FromBytesOrNil(bys),
-			Account:     result.Claims.Account,
-			Name:        result.Claims.Name,
-			AuthorityId: result.Claims.AuthorityId,
+			ID:      uint(result.Claims.UserID),
+			UUID:    uuid.FromBytesOrNil(bys),
+			Account: result.Claims.Account,
+			Name:    result.Claims.Name,
+			RoleId:  result.Claims.AuthorityId,
 		},
 		BufferTime: result.BufferTime,
 		StandardClaims: jwt.StandardClaims{

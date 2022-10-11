@@ -162,7 +162,7 @@ func (s *Star) GetUserInfo(req *pb.Token) {
 		msg.Claims = protoTransformClaims(claims)
 		msg.UserID = int64(claims.ID)
 		msg.UUID = claims.UUID.String()
-		msg.AuthorityId = claims.AuthorityId
+		msg.AuthorityId = claims.RoleId
 	}
 	s.SendMsg(constant.USER_RES, msg)
 }
@@ -179,7 +179,7 @@ func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
 		Claims: &pb.BaseClaims{
 			UserID:      int64(c.BaseClaims.ID),
 			UUID:        c.BaseClaims.UUID.String(),
-			AuthorityId: c.BaseClaims.AuthorityId,
+			AuthorityId: c.BaseClaims.RoleId,
 			Account:     c.BaseClaims.Account,
 			Name:        c.BaseClaims.Name,
 		},

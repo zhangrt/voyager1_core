@@ -20,7 +20,7 @@ func Enforce(c *gin.Context) (bool, error) {
 	// 获取请求方法
 	act := c.Request.Method
 	// 获取用户的角色
-	sub := waitUse.AuthorityId
+	sub := waitUse.RoleId
 
 	return CheckPolicy(sub, obj, act)
 }

@@ -56,11 +56,11 @@ func GetUserAuthorityId(c *gin.Context) string {
 		if cl, err := GetClaims(c); err != nil {
 			return ""
 		} else {
-			return cl.AuthorityId
+			return cl.RoleId
 		}
 	} else {
 		waitUse := claims.(*CustomClaims)
-		return waitUse.AuthorityId
+		return waitUse.RoleId
 	}
 }
 

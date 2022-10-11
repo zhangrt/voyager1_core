@@ -60,12 +60,12 @@ func TestAuth(t *testing.T) {
 				authClient := pb.NewAuthServiceClient(conn)
 				j := luna.NewTOKEN() // 唯一签名
 				claims := j.CreateClaims(luna.BaseClaims{
-					UUID:        uuid.NewV4(),
-					ID:          100001,
-					Name:        "test",
-					Account:     "test",
-					AuthorityId: "101",
-					Authority:   nil,
+					UUID:    uuid.NewV4(),
+					ID:      100001,
+					Name:    "test",
+					Account: "test",
+					RoleId:  "101",
+					Role:    nil,
 				})
 				token, err := j.CreateToken(claims)
 				if err != nil {

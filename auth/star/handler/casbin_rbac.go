@@ -17,7 +17,7 @@ func CasbinHandler(impl string) gin.HandlerFunc {
 		claims, e := c.Get(global.G_CONFIG.AUTHKey.User)
 		if e {
 			// 获取请求人角色ID
-			authorityId := claims.(*luna.CustomClaims).AuthorityId
+			authorityId := claims.(*luna.CustomClaims).RoleId
 			// 获取请求的PATH
 			obj := c.Request.URL.Path
 			// 获取请求方法
