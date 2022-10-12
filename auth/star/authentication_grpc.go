@@ -30,14 +30,14 @@ func (authentication *AuthenticationGrpc) ReadAuthentication(token string) (bool
 	return r, msg, claims
 }
 
-func (authentication *AuthenticationGrpc) GrantedAuthority(authorityId string, path string, method string) bool {
+func (authentication *AuthenticationGrpc) GrantedAuthority(roleIds []string, path string, method string) bool {
 	var r bool
 	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
 	result, err := client.GrantedAuthority(context.Background(), &pb.Policy{
-		AuthorityId: authorityId,
-		Path:        path,
-		Method:      method,
+		RoleIds: roleIds,
+		Path:    path,
+		Method:  method,
 	})
 	if err != nil {
 		r = false

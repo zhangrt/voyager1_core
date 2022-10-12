@@ -46,11 +46,11 @@ func (claimant *ClaimantGrpc) GetUserUUID(token string) uuid.UUID {
 	return UUID
 }
 
-func (claimant *ClaimantGrpc) GetUserAuthorityId(token string) string {
-	var AuthorityId string
+func (claimant *ClaimantGrpc) GetUserAuthorityId(token string) []string {
+	var RoleIds []string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		AuthorityId = claims.RoleId
+		RoleIds = claims.RoleIds
 	}
-	return AuthorityId
+	return RoleIds
 }

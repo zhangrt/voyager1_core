@@ -145,7 +145,7 @@ func (s *Star) CheckToken(req *pb.Token) {
 func (s *Star) AuthenticationRequest(req *pb.Policy) {
 	msg := &pb.Result{}
 	msg.Key = req.Key
-	success, _ := auth.CheckPolicy(req.AuthorityId, req.Path, req.Method)
+	success, _ := auth.CheckPolicy(req.RoleIds, req.Path, req.Method)
 	msg.Success = success
 	if !success {
 		msg.Msg = "insufficient privileges"
@@ -162,7 +162,7 @@ func (s *Star) GetUserInfo(req *pb.Token) {
 		msg.Claims = protoTransformClaims(claims)
 		msg.UserID = int64(claims.ID)
 		msg.UUID = claims.UUID.String()
-		msg.AuthorityId = claims.RoleId
+		msg.RoleIds = claims.RoleIds
 	}
 	s.SendMsg(constant.USER_RES, msg)
 }
@@ -177,11 +177,11 @@ func (s *Star) Receipe(id int32) {
 func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
 	p := pb.CustomClaims{
 		Claims: &pb.BaseClaims{
-			UserID:      int64(c.BaseClaims.ID),
-			UUID:        c.BaseClaims.UUID.String(),
-			AuthorityId: c.BaseClaims.RoleId,
-			Account:     c.BaseClaims.Account,
-			Name:        c.BaseClaims.Name,
+			UserID:  int64(c.BaseClaims.ID),
+			UUID:    c.BaseClaims.UUID.String(),
+			RoleIds: c.BaseClaims.RoleIds,
+			Account: c.BaseClaims.Account,
+			Name:    c.BaseClaims.Name,
 		},
 		BufferTime: c.BufferTime,
 		Standard: &pb.StandardClaims{

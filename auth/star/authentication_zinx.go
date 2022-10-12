@@ -12,9 +12,9 @@ import (
 )
 
 // 授权鉴权接口Zinx的实现
-type AuthenticationTcp struct{}
+type AuthenticationZinx struct{}
 
-func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
+func (authentication *AuthenticationZinx) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
 	var msg string
 	var claims *luna.CustomClaims
 	key := SendProtoTokenMsg(token, constant.TOKEN_REQ)
@@ -46,9 +46,9 @@ func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool,
 	return true, msg, claims
 }
 
-func (authentication *AuthenticationTcp) GrantedAuthority(authorityId string, path string, method string) bool {
+func (authentication *AuthenticationZinx) GrantedAuthority(roleIds []string, path string, method string) bool {
 	var r bool
-	key := SendProtoPolicyMsg(authorityId, path, method, constant.POLICY_REQ)
+	key := SendProtoPolicyMsg(roleIds, path, method, constant.POLICY_REQ)
 
 	// 设置超时时间
 	timeout := time.After(time.Second * 10)

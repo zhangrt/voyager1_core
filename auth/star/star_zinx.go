@@ -27,13 +27,13 @@ func SendProtoTokenMsg(token string, msgId uint32) string {
 	return key
 }
 
-func SendProtoPolicyMsg(a string, p string, m string, msgId uint32) string {
+func SendProtoPolicyMsg(a []string, p string, m string, msgId uint32) string {
 	key := uuid.NewV4().String()
 	star.StatelliteMgrObj.AddPolicyReq(key, &pb.Policy{
-		Key:         key,
-		AuthorityId: a,
-		Path:        p,
-		Method:      m,
+		Key:     key,
+		RoleIds: a,
+		Path:    p,
+		Method:  m,
 	})
 	star.StatelliteMgrObj.AddMsgKey(key, msgId)
 	return key

@@ -8,8 +8,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type GS_BASE_MODEL struct {
+type GS_BASE_MODEL_ID_UINT struct {
 	ID            uint           `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
+	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
+	Creator       string         `json:"creator"  gorm:"comment:创建人"`
+	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
+	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
+	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	Deleted       int            `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
+}
+
+type GS_BASE_MODEL_ID_STRING struct {
+	ID            string         `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
 	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
 	Creator       string         `json:"creator"  gorm:"comment:创建人"`
 	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
@@ -35,9 +47,7 @@ type GS_BASE_USER struct {
 	// 用户侧边主题
 	SideMode string `json:"sideMode" gorm:"default:dark;comment:用户主题"`
 	// 用户头像
-	HeaderImg string `json:"headerImg" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"`
-	// 权限ID
-	RoleId string `json:"roleId" gorm:"default:888;comment:用户角色ID"`
+	Avatar string `json:"avatar" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"`
 	// 部门Id
 	DepartMentId string `json:"departmentId" gorm:"default:11111;comment:部门ID"`
 	// 部门名称

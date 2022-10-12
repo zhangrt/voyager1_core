@@ -51,16 +51,16 @@ func GetUserUUID(c *gin.Context) uuid.UUID {
 }
 
 // GetUserAuthorityId 从Gin的Context中获取从jwt解析出来的用户角色id
-func GetUserAuthorityId(c *gin.Context) string {
+func GetUserAuthorityId(c *gin.Context) []string {
 	if claims, exists := c.Get(global.G_CONFIG.AUTHKey.User); !exists {
 		if cl, err := GetClaims(c); err != nil {
-			return ""
+			return nil
 		} else {
-			return cl.RoleId
+			return cl.RoleIds
 		}
 	} else {
 		waitUse := claims.(*CustomClaims)
-		return waitUse.RoleId
+		return waitUse.RoleIds
 	}
 }
 

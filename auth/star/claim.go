@@ -11,7 +11,7 @@ type CLAIM interface {
 	GetUser(token string) (*luna.CustomClaims, error)
 	GetUserID(token string) uint
 	GetUserUUID(token string) uuid.UUID
-	GetUserAuthorityId(token string) string
+	GetUserAuthorityId(token string) []string
 }
 
 // 通过传入实现类型返回不同的接口实现
@@ -21,7 +21,7 @@ func NewCLAMI(impl string) CLAIM {
 	case constant.GPRC:
 		return &ClaimantGrpc{}
 	case constant.TCP:
-		return &ClaimantTcp{}
+		return &ClaimantZinx{}
 	default:
 		return &ClaimantGrpc{}
 	}

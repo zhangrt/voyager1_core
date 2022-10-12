@@ -20,12 +20,12 @@ func Enforce(c *gin.Context) (bool, error) {
 	// 获取请求方法
 	act := c.Request.Method
 	// 获取用户的角色
-	sub := waitUse.RoleId
+	sub := waitUse.RoleIds
 
 	return CheckPolicy(sub, obj, act)
 }
 
-func CheckPolicy(sub string, obj string, act string) (bool, error) {
+func CheckPolicy(sub []string, obj string, act string) (bool, error) {
 	once.Do(func() {
 		auth = NewCasbin()
 	})

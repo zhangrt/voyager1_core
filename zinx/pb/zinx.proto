@@ -12,7 +12,7 @@ message Token {
 message Policy {
     string path = 1;
     string method = 2;
-    string authorityId = 3;
+    repeated string roleIds = 3;
     string key = 4;
 }
 
@@ -34,7 +34,7 @@ message Receipe {
 message User {
     int64  userID       = 1;
     string UUID         = 2;
-    string authorityId    = 3;
+    repeated string roleIds    = 3;
     CustomClaims claims = 4;
     string key = 5;
 }
@@ -48,7 +48,7 @@ message CustomClaims {
 message BaseClaims {
     int64  userID       = 1;
     string UUID         = 2;
-    string authorityId    = 3;
+    repeated string roleIds    = 3;
     string account     = 4;
     string name     = 5;
 }

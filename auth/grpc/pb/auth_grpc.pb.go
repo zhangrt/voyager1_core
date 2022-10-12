@@ -37,7 +37,7 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 
 func (c *authServiceClient) ReadAuthentication(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
-	err := c.cc.Invoke(ctx, "/service.AuthService/ReadAuthentication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.grpc.pb.service.AuthService/ReadAuthentication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *authServiceClient) ReadAuthentication(ctx context.Context, in *Token, o
 
 func (c *authServiceClient) GrantedAuthority(ctx context.Context, in *Policy, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
-	err := c.cc.Invoke(ctx, "/service.AuthService/GrantedAuthority", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.grpc.pb.service.AuthService/GrantedAuthority", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *authServiceClient) GrantedAuthority(ctx context.Context, in *Policy, op
 
 func (c *authServiceClient) GetUser(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/service.AuthService/GetUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.grpc.pb.service.AuthService/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func _AuthService_ReadAuthentication_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.AuthService/ReadAuthentication",
+		FullMethod: "/auth.grpc.pb.service.AuthService/ReadAuthentication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).ReadAuthentication(ctx, req.(*Token))
@@ -126,7 +126,7 @@ func _AuthService_GrantedAuthority_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.AuthService/GrantedAuthority",
+		FullMethod: "/auth.grpc.pb.service.AuthService/GrantedAuthority",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).GrantedAuthority(ctx, req.(*Policy))
@@ -144,7 +144,7 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.AuthService/GetUser",
+		FullMethod: "/auth.grpc.pb.service.AuthService/GetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).GetUser(ctx, req.(*Token))
@@ -156,7 +156,7 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "service.AuthService",
+	ServiceName: "auth.grpc.pb.service.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

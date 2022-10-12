@@ -64,8 +64,7 @@ func TestAuth(t *testing.T) {
 					ID:      100001,
 					Name:    "test",
 					Account: "test",
-					RoleId:  "101",
-					Role:    nil,
+					RoleIds: []string{"101"},
 				})
 				token, err := j.CreateToken(claims)
 				if err != nil {

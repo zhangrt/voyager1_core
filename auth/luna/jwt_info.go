@@ -8,7 +8,7 @@ import (
 )
 
 type JwtBlacklist struct {
-	global.GS_BASE_MODEL
+	global.GS_BASE_MODEL_ID_UINT
 	Jwt string `gorm:"type:text;comment:jwt"`
 }
 
@@ -27,12 +27,15 @@ type BaseClaims struct {
 	ID uint
 	// 用户名
 	Account string
-	// 昵称
+	Phone   string
+	Email   string
+	// 名称
 	Name string
-	// 权限ID
-	RoleId string
-	// 权限信息
-	Role interface{}
+	// // 权限ID
+	// RoleId  string
+	RoleIds []string
+	// // 权限信息
+	// Role interface{}
 	// 权限信息
 	Roles []interface{}
 	// 部门Id

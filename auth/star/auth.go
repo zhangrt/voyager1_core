@@ -10,16 +10,16 @@ type AUTH interface {
 	// 通过token请求鉴权
 	ReadAuthentication(token string) (bool, string, *luna.CustomClaims)
 	// 通过request中的path和method请求验证策略
-	GrantedAuthority(authorityId string, path string, method string) bool
+	GrantedAuthority(roleIds []string, path string, method string) bool
 }
 
-// 通过传入实现类型返回默认的接口实现，impl => 1. grpc(tcp、udp...)、 2. tcp
+// 通过传入实现类型返回默认的接口实现，impl => 1. grpc(tcp、udp...)、 2. zinx(tcp、udp)
 func NewAUTH(impl string) AUTH {
 	switch impl {
 	case constant.GPRC:
 		return &AuthenticationGrpc{}
 	case constant.TCP:
-		return &AuthenticationTcp{}
+		return &AuthenticationZinx{}
 	default:
 		return &AuthenticationGrpc{}
 	}

@@ -95,10 +95,24 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 		casbin = luna.NewCasbin()
 	})
 	result := new(pb.Result)
+	var err_ error
+	result.Success = false
 	e := casbin.Casbin()
-	success, err := e.Enforce(p.AuthorityId, p.Path, p.Method)
-	result.Success = success
-	return result, err
+	for _, roleId := range p.RoleIds {
+		success, err := e.Enforce(roleId, p.Path, p.Method)
+		if err != nil {
+			err_ = err
+			result.Msg = err.Error()
+			// 错误
+			break
+		}
+		if success {
+			result.Success = success
+			err_ = nil
+			break
+		}
+	}
+	return result, err_
 
 }
 
@@ -110,7 +124,7 @@ func (auth *AuthService) GetUser(c context.Context, p *pb.Token) (*pb.User, erro
 		user.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
 		user.UserID = int64(claims.ID)
 		user.UUID = claims.UUID.String()
-		user.AuthorityId = claims.RoleId
+		user.RoleIds = claims.RoleIds
 	}
 	return user, nil
 }

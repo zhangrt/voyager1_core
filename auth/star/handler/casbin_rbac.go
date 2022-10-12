@@ -17,12 +17,12 @@ func CasbinHandler(impl string) gin.HandlerFunc {
 		claims, e := c.Get(global.G_CONFIG.AUTHKey.User)
 		if e {
 			// 获取请求人角色ID
-			authorityId := claims.(*luna.CustomClaims).RoleId
+			roleIds := claims.(*luna.CustomClaims).RoleIds
 			// 获取请求的PATH
 			obj := c.Request.URL.Path
 			// 获取请求方法
 			act := c.Request.Method
-			success := auth.GrantedAuthority(authorityId, obj, act)
+			success := auth.GrantedAuthority(roleIds, obj, act)
 			if success {
 				c.Next()
 			} else {
