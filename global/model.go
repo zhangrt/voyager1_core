@@ -33,7 +33,7 @@ type GS_BASE_MODEL_ID_STRING struct {
 }
 
 type GS_BASE_MODEL_ID_NO_PRIMARY struct {
-	ID            string         `gorm:"id" json:"id,string" form:"id"` // ID
+	Id            string         `json:"id,string" form:"id"` // ID
 	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
 	Creator       string         `json:"creator"  gorm:"comment:创建人"`
 	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
