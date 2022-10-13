@@ -32,6 +32,17 @@ type GS_BASE_MODEL_ID_STRING struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
 }
 
+type GS_BASE_MODEL_ID_NONE struct {
+	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
+	Creator       string         `json:"creator"  gorm:"comment:创建人"`
+	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
+	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
+	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	Deleted       int            `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
+}
+
 // v0.2 针对基础业务做封装，被上层业务user结构体引用
 type GS_BASE_USER struct {
 	// 适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用
