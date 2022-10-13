@@ -37,7 +37,7 @@ type BaseClaims struct {
 	// // 权限信息
 	// Role interface{}
 	// 权限信息
-	Roles []interface{}
+	Roles interface{}
 	// 部门Id
 	DepartMentId string
 	// 部门名称

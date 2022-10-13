@@ -34,7 +34,6 @@ message User {
     string UUID         = 2;
     repeated string roleIds    = 3;
     CustomClaims claims = 4;
-    string key = 5;
 }
 
 message CustomClaims {
