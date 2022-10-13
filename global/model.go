@@ -32,6 +32,18 @@ type GS_BASE_MODEL_ID_STRING struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
 }
 
+type GS_BASE_MODEL_ID_NO_PRIMARY struct {
+	ID            string         `gorm:"id" json:"id,string" form:"id"` // ID
+	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
+	Creator       string         `json:"creator"  gorm:"comment:创建人"`
+	LastUpdaterId string         `json:"last_update_id"  gorm:"comment:更新人id"`
+	LastUpdater   string         `json:"last_updater"  gorm:"comment:更新人"`
+	CreatedAt     time.Time      `json:"createdAt" form:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `json:"updatedAt" form:"updatedAt"` // 更新时间
+	Deleted       int            `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
+}
+
 type GS_BASE_MODEL_ID_NONE struct {
 	CreatorId     string         `json:"creator_id"  gorm:"comment:创建人id"`
 	Creator       string         `json:"creator"  gorm:"comment:创建人"`
