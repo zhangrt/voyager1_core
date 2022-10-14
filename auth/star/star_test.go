@@ -47,7 +47,6 @@ func TestGrpc(t *testing.T) {
 	luna.RegisterCasbin(&luna.UnimplementedCasbin{}) // 注入Casbin实现类
 	luna.RegisterJwt(&luna.UnimplementedJwt{})       // 注入Jwt实现类
 
-
 	go func() {
 		defer wg.Done()
 		grpc.NewServer().RegisterAuthServiceServer(&service.AuthService{}).LunchGrpcServer()
@@ -68,19 +67,11 @@ func TestGrpc(t *testing.T) {
 			time.Sleep(time.Second * 2)
 			conn, client := star.GetGrpcClient()
 			r, e := client.GrantedAuthority(context.Background(), &pb.Policy{
-
-	go func() {
-		for {
-			
-			conn, client := star.GetGrpcClient()
-			r, e := client.GetUser(context.Background(), &pb.Token{
-
 				Token: token,
 			})
 			if e != nil {
 				fmt.Errorf(e.Error())
 			}
-
 			fmt.Println("Result:", r)
 			fmt.Println()
 			fmt.Println("----------------------------------------------")
@@ -91,7 +82,6 @@ func TestGrpc(t *testing.T) {
 				break
 			}
 			star.CloseConn(conn)
-
 		}
 	}()
 	wg.Wait()
