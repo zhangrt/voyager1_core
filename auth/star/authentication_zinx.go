@@ -46,9 +46,9 @@ func (authentication *AuthenticationZinx) ReadAuthentication(token string) (bool
 	return true, msg, claims
 }
 
-func (authentication *AuthenticationZinx) GrantedAuthority(roleIds []string, path string, method string) bool {
+func (authentication *AuthenticationZinx) GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims) {
 	var r bool
-	key := SendProtoPolicyMsg(roleIds, path, method, constant.POLICY_REQ)
+	key := SendProtoPolicyMsg(token, path, method, constant.POLICY_REQ)
 
 	// 设置超时时间
 	timeout := time.After(time.Second * 10)
@@ -71,9 +71,9 @@ func (authentication *AuthenticationZinx) GrantedAuthority(roleIds []string, pat
 		case <-timeout:
 			RemoteTimeout(key)
 			r = false
-			return r
+			return r, result.Msg, util.ZinxProtoClaimsTransformClaims(result.Claims)
 		}
 
 	}
-	return r
+	return r, result.Msg, util.ZinxProtoClaimsTransformClaims(result.Claims)
 }

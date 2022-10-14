@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	ReadAuthentication(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Result, error)
 	GrantedAuthority(ctx context.Context, in *Policy, opts ...grpc.CallOption) (*Result, error)
 	GetUser(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error)
 }
@@ -33,15 +32,6 @@ type authServiceClient struct {
 
 func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
-}
-
-func (c *authServiceClient) ReadAuthentication(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Result, error) {
-	out := new(Result)
-	err := c.cc.Invoke(ctx, "/auth.grpc.pb.service.AuthService/ReadAuthentication", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *authServiceClient) GrantedAuthority(ctx context.Context, in *Policy, opts ...grpc.CallOption) (*Result, error) {
@@ -66,7 +56,6 @@ func (c *authServiceClient) GetUser(ctx context.Context, in *Token, opts ...grpc
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
-	ReadAuthentication(context.Context, *Token) (*Result, error)
 	GrantedAuthority(context.Context, *Policy) (*Result, error)
 	GetUser(context.Context, *Token) (*User, error)
 	mustEmbedUnimplementedAuthServiceServer()
@@ -76,9 +65,6 @@ type AuthServiceServer interface {
 type UnimplementedAuthServiceServer struct {
 }
 
-func (UnimplementedAuthServiceServer) ReadAuthentication(context.Context, *Token) (*Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReadAuthentication not implemented")
-}
 func (UnimplementedAuthServiceServer) GrantedAuthority(context.Context, *Policy) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantedAuthority not implemented")
 }
@@ -96,24 +82,6 @@ type UnsafeAuthServiceServer interface {
 
 func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
 	s.RegisterService(&AuthService_ServiceDesc, srv)
-}
-
-func _AuthService_ReadAuthentication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).ReadAuthentication(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/auth.grpc.pb.service.AuthService/ReadAuthentication",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).ReadAuthentication(ctx, req.(*Token))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthService_GrantedAuthority_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -159,10 +127,6 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "auth.grpc.pb.service.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ReadAuthentication",
-			Handler:    _AuthService_ReadAuthentication_Handler,
-		},
 		{
 			MethodName: "GrantedAuthority",
 			Handler:    _AuthService_GrantedAuthority_Handler,

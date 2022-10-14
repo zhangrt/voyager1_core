@@ -145,11 +145,9 @@ func (s *Star) CheckToken(req *pb.Token) {
 func (s *Star) AuthenticationRequest(req *pb.Policy) {
 	msg := &pb.Result{}
 	msg.Key = req.Key
-	success, _ := auth.CheckPolicy(req.RoleIds, req.Path, req.Method)
+	success, m, _ := auth.CheckAuth(req.Token, req.Path, req.Method)
 	msg.Success = success
-	if !success {
-		msg.Msg = "insufficient privileges"
-	}
+	msg.Msg = m
 	s.SendMsg(constant.POLICY_RES, msg)
 }
 

@@ -1,23 +1,17 @@
 package service
 
 import (
-	"fmt"
 	"sync"
-	"time"
 
 	pb "github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	luna "github.com/zhangrt/voyager1_core/auth/luna"
-	"github.com/zhangrt/voyager1_core/constant"
-	"github.com/zhangrt/voyager1_core/global"
 	"github.com/zhangrt/voyager1_core/util"
-	"go.uber.org/zap"
 
 	"context"
 )
 
 // 懒加载初始化
 var (
-	jwt    luna.JWT
 	casbin luna.Casbin
 	once   sync.Once
 )
@@ -30,65 +24,6 @@ type AuthService struct {
 	pb.UnimplementedAuthServiceServer
 }
 
-// 读取Token验证Token合法性与过期时间校验
-func (auth *AuthService) ReadAuthentication(c context.Context, p *pb.Token) (*pb.Result, error) {
-	once.Do(func() {
-		jwt = luna.NewJWT()
-	})
-	result := new(pb.Result)
-	token := p.Token
-	if token == "" {
-		result.Msg = "Not logged in or accessed illegally"
-		result.Success = false
-		return result, nil
-	}
-	if jwt.IsBlacklist(token) {
-		result.Msg = "Your account is off-site logged in or the token is invalid"
-		result.Success = false
-		return result, nil
-	}
-	j := luna.NewTOKEN()
-	// parseToken 解析token包含的信息
-	claims, err := j.ParseToken(token)
-	if err != nil {
-		if err == luna.TokenExpired {
-			result.Msg = "Authorization has expired"
-			result.Success = false
-			return result, nil
-		}
-		result.Msg = err.Error()
-		result.Success = false
-		return result, err
-	}
-	// 解析token成功
-	result.Success = true
-	result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
-
-	// 判断是否需要生成Newtoken
-	now := time.Now().Unix()
-	if claims.ExpiresAt-now < claims.BufferTime {
-		claims.ExpiresAt = now + global.G_CONFIG.JWT.ExpiresTime
-		newToken, _ := j.CreateTokenByOldToken(token, *claims)
-		newClaims, _ := j.ParseToken(newToken)
-		// 将 New Token 存在 Msg 中
-		result.Msg = fmt.Sprintf("%s"+constant.MARKER+"%d", newToken, newClaims.ExpiresAt)
-		// 存 New Claims
-		result.Claims = util.GrpcLunaClaimsTransformProtoClaims(newClaims)
-		// 单点, 在 Server 端进行拉黑
-		if !global.G_CONFIG.System.UseMultipoint {
-			RedisJwtToken, err := jwt.GetCacheJWT(newClaims.Account)
-			if err != nil {
-				global.G_LOG.Error("get redis jwt failed", zap.Error(err))
-			} else { // 当之前的取成功时才进行拉黑操作
-				_ = jwt.JsonInBlacklist(luna.JwtBlacklist{Jwt: RedisJwtToken})
-			}
-			// 无论如何都要记录当前的活跃状态
-			_ = jwt.SetCacheJWT(newToken, newClaims.Account)
-		}
-	}
-	return result, nil
-}
-
 // 通过Casbin校验角色权限 - authorityId、path、method
 func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.Result, error) {
 	once.Do(func() {
@@ -96,9 +31,18 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 	})
 	result := new(pb.Result)
 	var err_ error
-	result.Success = false
+	s, m, claims, err := luna.ReadAuthentication(p.Token)
+	result.Success = s
+	// token不合法或过期等情况
+	if !s {
+		result.Msg = m
+		result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
+		return result, err
+	}
+
+	// 校验角色信息权限，只要有一个角色有权限即通过
 	e := casbin.Casbin()
-	for _, roleId := range p.RoleIds {
+	for i, roleId := range claims.RoleIds {
 		success, err := e.Enforce(roleId, p.Path, p.Method)
 		if err != nil {
 			err_ = err
@@ -110,6 +54,11 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 			result.Success = success
 			err_ = nil
 			break
+		}
+		if !success && (i == len(claims.RoleIds)-1) {
+			result.Success = false
+			result.Msg = "insufficient privileges"
+			err_ = nil
 		}
 	}
 	return result, err_

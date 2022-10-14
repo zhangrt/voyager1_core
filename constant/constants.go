@@ -5,7 +5,7 @@ package constant
 const (
 	MARKER = "&:$"
 	GPRC   = "grpc"
-	TCP    = "tcp"
+	Zinx   = "zinx"
 )
 
 const (
