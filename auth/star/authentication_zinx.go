@@ -11,10 +11,10 @@ import (
 	pb "github.com/zhangrt/voyager1_core/zinx/pb"
 )
 
-// 授权鉴权接口实现
-type AuthenticationTcp struct{}
+// 授权鉴权接口Zinx的实现
+type AuthenticationZinx struct{}
 
-func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
+func (authentication *AuthenticationZinx) ReadAuthentication(token string) (bool, string, *luna.CustomClaims) {
 	var msg string
 	var claims *luna.CustomClaims
 	key := SendProtoTokenMsg(token, constant.TOKEN_REQ)
@@ -46,9 +46,9 @@ func (authentication *AuthenticationTcp) ReadAuthentication(token string) (bool,
 	return true, msg, claims
 }
 
-func (authentication *AuthenticationTcp) GrantedAuthority(authorityId string, path string, method string) bool {
+func (authentication *AuthenticationZinx) GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims, string) {
 	var r bool
-	key := SendProtoPolicyMsg(authorityId, path, method, constant.POLICY_REQ)
+	key := SendProtoPolicyMsg(token, path, method, constant.POLICY_REQ)
 
 	// 设置超时时间
 	timeout := time.After(time.Second * 10)
@@ -71,9 +71,9 @@ func (authentication *AuthenticationTcp) GrantedAuthority(authorityId string, pa
 		case <-timeout:
 			RemoteTimeout(key)
 			r = false
-			return r
+			return r, result.Msg, util.ZinxProtoClaimsTransformClaims(result.Claims), result.NewToken
 		}
 
 	}
-	return r
+	return r, result.Msg, util.ZinxProtoClaimsTransformClaims(result.Claims), result.NewToken
 }

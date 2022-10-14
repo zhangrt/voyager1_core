@@ -1,4 +1,4 @@
-package gallery
+package voyager1_core
 
 import (
 	"fmt"
@@ -16,9 +16,9 @@ var (
 )
 
 // 初始化配置信息
-type Init struct{}
+type Core struct{}
 
-func NewInit() *Init {
+func New() *Core {
 	fmt.Printf(`
 	_____/\\\\\\\\\\\\_______/\\\\\\\\\\\\__
  ___/\\\//////////_____/\\\//////////__
@@ -30,83 +30,84 @@ func NewInit() *Init {
        _\//\\\\\\\\\\\\/___\//\\\\\\\\\\\\/__
         __\////////////______\////////////____
 	`)
-	return &Init{}
+	fmt.Println()
+	return &Core{}
 }
 
-// func (init *Init) DB(db *gorm.DB) *Init {
+// func (Core *Core) DB(db *gorm.DB) *Core {
 // 	global.G_DB = db
-// 	return init
+// 	return Core
 // }
 
-func (init *Init) SetRedisMod(b bool) *Init {
+func (Core *Core) SetRedisMod(b bool) *Core {
 	global.G_REDIS_CLUSTER_MOD = b
-	return init
+	return Core
 }
 
-func (init *Init) RedisStandalone(r *redis.Client) *Init {
+func (Core *Core) RedisStandalone(r *redis.Client) *Core {
 	global.G_REDIS_CLUSTER_MOD = false
 	global.G_REDIS_STANDALONE = r
-	return init
+	return Core
 }
 
-func (init *Init) RedisCluster(rs *redis.ClusterClient) *Init {
+func (Core *Core) RedisCluster(rs *redis.ClusterClient) *Core {
 	global.G_REDIS_CLUSTER_MOD = true
 	global.G_REDIS_CLUSTER = rs
-	return init
+	return Core
 }
 
-func (init *Init) Viper(vp *viper.Viper) *Init {
+func (Core *Core) Viper(vp *viper.Viper) *Core {
 	global.G_VP = vp
-	return init
+	return Core
 }
 
-func (init *Init) Zap(zap *zap.Logger) *Init {
+func (Core *Core) Zap(zap *zap.Logger) *Core {
 	global.G_LOG = zap
-	return init
+	return Core
 }
 
-// func (init *Init) BlackCache(cache local_cache.Cache) *Init {
+// func (Core *Core) BlackCache(cache local_cache.Cache) *Core {
 // 	global.BlackCache = cache
-// 	return init
+// 	return Core
 // }
 
-func (init *Init) Config(config config.Server) *Init {
+func (Core *Core) Config(config config.Server) *Core {
 	global.G_CONFIG = config
-	return init
+	return Core
 }
 
-func (init *Init) ConSystem(c config.System) *Init {
+func (Core *Core) ConSystem(c config.System) *Core {
 	global.G_CONFIG.System = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigAuth(c config.AUTHKey) *Init {
+func (Core *Core) ConfigAuth(c config.AUTHKey) *Core {
 	InitAuthKey = true
 	global.G_CONFIG.AUTHKey = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigCasbin(c config.Casbin) *Init {
+func (Core *Core) ConfigCasbin(c config.Casbin) *Core {
 	global.G_CONFIG.Casbin = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigJwt(c config.JWT) *Init {
+func (Core *Core) ConfigJwt(c config.JWT) *Core {
 	global.G_CONFIG.JWT = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigMinio(c config.Minio) *Init {
+func (Core *Core) ConfigMinio(c config.Minio) *Core {
 	global.G_CONFIG.Minio = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigZinx(c config.Zinx) *Init {
+func (Core *Core) ConfigZinx(c config.Zinx) *Core {
 	global.G_CONFIG.Zinx = c
-	return init
+	return Core
 }
 
-func (init *Init) ConfigGrpc(c config.Grpc) *Init {
+func (Core *Core) ConfigGrpc(c config.Grpc) *Core {
 	global.G_CONFIG.Grpc = c
-	return init
+	return Core
 }

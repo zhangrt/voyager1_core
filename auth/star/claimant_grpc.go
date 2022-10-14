@@ -22,7 +22,7 @@ func (claimant *ClaimantGrpc) GetUser(token string) (*luna.CustomClaims, error) 
 		Token: token,
 	})
 	if err != nil {
-		return nil, err
+		return claims, err
 	}
 	claims = util.GrpcProtoUser2Claims(result)
 	return claims, err
@@ -46,11 +46,11 @@ func (claimant *ClaimantGrpc) GetUserUUID(token string) uuid.UUID {
 	return UUID
 }
 
-func (claimant *ClaimantGrpc) GetUserAuthorityId(token string) string {
-	var AuthorityId string
+func (claimant *ClaimantGrpc) GetUserAuthorityId(token string) []string {
+	var RoleIds []string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		AuthorityId = claims.AuthorityId
+		RoleIds = claims.RoleIds
 	}
-	return AuthorityId
+	return RoleIds
 }

@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// 获取 conn 和 Client
 func GetGrpcClient() (*grpc.ClientConn, pb.AuthServiceClient) {
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Client.Host, global.G_CONFIG.Grpc.Client.Port), grpc.WithInsecure())
 	if err != nil {
@@ -19,7 +20,13 @@ func GetGrpcClient() (*grpc.ClientConn, pb.AuthServiceClient) {
 
 	return conn, authClient
 }
+
+// 关闭连接
 func CloseConn(conn *grpc.ClientConn) {
 
-	conn.Close()
+	err := conn.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

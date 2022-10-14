@@ -8,7 +8,7 @@ import (
 )
 
 type JwtBlacklist struct {
-	global.GS_BASE_MODEL
+	global.GS_BASE_MODEL_ID_UINT
 	Jwt string `gorm:"type:text;comment:jwt"`
 }
 
@@ -21,26 +21,29 @@ type CustomClaims struct {
 
 // v0.2 针对基础业务做补充，增加部门id、单位id等
 type BaseClaims struct {
-	// UUID
+	// UUID 标准通用的uuid
 	UUID uuid.UUID
-	// ID
+	// ID 一般对应于数组库默认的自增主键
 	ID uint
 	// 用户名
 	Account string
-	// 昵称
+	Phone   string
+	Email   string
+	// 名称
 	Name string
-	// 权限ID
-	AuthorityId string
+	// // 权限ID
+	// RoleId  string
+	RoleIds []string
+	// // 权限信息
+	// Role interface{}
 	// 权限信息
-	Authority interface{}
-	// 权限信息
-	Authorities []interface{}
+	Roles interface{}
 	// 部门Id
 	DepartMentId string
 	// 部门名称
 	DepartMentName string
-	// 单位Id
-	UnitId string
-	// 单位名称
-	UnitName string
+	// 组织机构ID
+	OrganizationId string
+	// 组织机构名称
+	OrganizationName string
 }

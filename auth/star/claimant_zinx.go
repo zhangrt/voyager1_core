@@ -12,9 +12,9 @@ import (
 )
 
 // 用户信息接口TCP实现
-type ClaimantTcp struct{}
+type ClaimantZinx struct{}
 
-func (claimant *ClaimantTcp) GetUser(token string) (*luna.CustomClaims, error) {
+func (claimant *ClaimantZinx) GetUser(token string) (*luna.CustomClaims, error) {
 	var claims *luna.CustomClaims
 	var err error
 	key := SendProtoTokenMsg(token, constant.USER_REQ)
@@ -46,7 +46,7 @@ func (claimant *ClaimantTcp) GetUser(token string) (*luna.CustomClaims, error) {
 	return claims, err
 }
 
-func (claimant *ClaimantTcp) GetUserID(token string) uint {
+func (claimant *ClaimantZinx) GetUserID(token string) uint {
 	var ID uint
 	claims, err := claimant.GetUser(token)
 	if err != nil {
@@ -55,7 +55,7 @@ func (claimant *ClaimantTcp) GetUserID(token string) uint {
 	return ID
 }
 
-func (claimant *ClaimantTcp) GetUserUUID(token string) uuid.UUID {
+func (claimant *ClaimantZinx) GetUserUUID(token string) uuid.UUID {
 	var UUID uuid.UUID
 	claims, err := claimant.GetUser(token)
 	if err != nil {
@@ -64,11 +64,11 @@ func (claimant *ClaimantTcp) GetUserUUID(token string) uuid.UUID {
 	return UUID
 }
 
-func (claimant *ClaimantTcp) GetUserAuthorityId(token string) string {
-	var AuthorityId string
+func (claimant *ClaimantZinx) GetUserAuthorityId(token string) []string {
+	var RoleIds []string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		AuthorityId = claims.AuthorityId
+		RoleIds = claims.RoleIds
 	}
-	return AuthorityId
+	return RoleIds
 }

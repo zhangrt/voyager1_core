@@ -11,6 +11,7 @@ import (
 	"github.com/zhangrt/voyager1_core/config"
 )
 
+// 定义全局变量
 var (
 	// core 去除 gorm相关代码
 	// G_DB                  *gorm.DB

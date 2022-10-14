@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
+	"github.com/BurntSushi/toml"
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
@@ -11,6 +13,9 @@ import (
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 	idvalidator "github.com/guanguans/id-validator"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	sui18n "github.com/suisrc/gin-i18n"
+	"golang.org/x/text/language"
 	"os"
 	"reflect"
 	"regexp"
@@ -149,11 +154,6 @@ var cfg *Config
 
 // 读取配置文件
 func ParseConfig(filename string) (*Config, error) {
-	/*	ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		expath := filepath.Dir(ex)*/
 	expath, _ := os.Getwd()
 	file, err := os.Open(expath + "/util/validate/" + filename)
 	defer file.Close()
@@ -170,4 +170,101 @@ func ParseConfig(filename string) (*Config, error) {
 
 func GetConfig() *Config {
 	return cfg
+}
+
+// 定义中间件-校验
+func ValidateMiddleWare() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//model:=c.Request.Form
+		uni := ut.New(zh.New(), en.New())
+		//locale,_ := c.Request.FormValue("lang") //todo
+		locale := "zh"
+		trans, _ := uni.GetTranslator(locale)
+		validate := validator.New()
+		// 注册自定义校验规则
+		validate.RegisterValidation("beforeCurrentDate", beforeCurrentDate)
+		validate.RegisterValidation("isCardId", isCardId)
+		validate.RegisterValidation("isPhoneNo", isPhoneNo)
+		validate.RegisterValidation("isPassportNo", isPassportNo)
+		// 注册翻译器
+		switch locale {
+		case "zh":
+			zhTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("comment")
+			})
+		case "en":
+			enTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("en_comment")
+			})
+		default:
+			zhTranslations.RegisterDefaultTranslations(validate, trans)
+			validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+				return field.Tag.Get("comment")
+			})
+		}
+		//dateinfo := I18nInit(locale, "before_current_date")
+		//errinfo := I18nInit(locale, "error_info")
+		dateinfo := sui18n.FormatText(c, &sui18n.Message{ID: "before_current_date"})
+		errinfo := sui18n.FormatText(c, &sui18n.Message{ID: "error_info"})
+		RegisterDate(validate, trans, dateinfo)
+		RegisterCardId(validate, trans, errinfo)
+		RegisterPhoneNo(validate, trans, errinfo)
+		RegisterPassportNo(validate, trans, errinfo)
+		//validate.Struct(model)
+		c.Set("validateRegister", validate)
+		c.Set("translate", trans)
+		c.Next()
+	}
+}
+
+func I18nInit(lang string, wordId string) string {
+	var bundle *i18n.Bundle
+	var localizer *i18n.Localizer
+	switch lang {
+	case "zh":
+		bundle = i18n.NewBundle(language.Chinese)
+	case "en":
+		bundle = i18n.NewBundle(language.English)
+	default:
+		bundle = i18n.NewBundle(language.Chinese)
+	}
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	expath, _ := os.Getwd()
+	switch lang {
+	case "zh":
+		bundle.MustLoadMessageFile(expath + "/i18n/zh.toml")
+		localizer = i18n.NewLocalizer(bundle, "zh")
+	case "en":
+		bundle.MustLoadMessageFile(expath + "/i18n/en.toml")
+		localizer = i18n.NewLocalizer(bundle, "en")
+	default:
+		bundle.MustLoadMessageFile(expath + "/i18n/zh.toml")
+		localizer = i18n.NewLocalizer(bundle, "zh")
+	}
+	str := localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: wordId,
+		},
+	})
+	//return localizer
+	return str
+}
+
+// 处理返回值格式
+func GetReturnValue(c *gin.Context, model interface{}) any {
+	val, _ := c.Get("validateRegister")
+	err := val.(*validator.Validate).Struct(model)
+	if err != nil {
+		trans, _ := c.Get("translate")
+		errs := err.(validator.ValidationErrors)
+		returnErrs := []ReturnModel{}
+		for _, e := range errs {
+			returnModel := ReturnModel{Field: e.StructField(), Message: e.Translate(trans.(ut.Translator))}
+			returnErrs = append(returnErrs, returnModel)
+		}
+		return returnErrs
+	}
+	return nil
 }

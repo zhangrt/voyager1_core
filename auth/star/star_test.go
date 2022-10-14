@@ -14,6 +14,8 @@ import (
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/auth/star"
 	"github.com/zhangrt/voyager1_core/global"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func TestStar(t *testing.T) {
@@ -34,43 +36,62 @@ func TestGrpc(t *testing.T) {
 	global.G_CONFIG.JWT.SigningKey = "gsafety"
 	global.G_CONFIG.AUTHKey.RefreshToken = "new-token"
 	global.G_CONFIG.System.UseMultipoint = true
-	global.G_CONFIG.JWT.ExpiresTime = 60
+	global.G_CONFIG.JWT.ExpiresTime = 10
+	global.G_CONFIG.JWT.BufferTime = 7
 	global.G_CONFIG.Grpc.Server.Host = "127.0.0.1"
 	global.G_CONFIG.Grpc.Server.Port = 5431
 	global.G_CONFIG.Grpc.Client.Host = "127.0.0.1"
 	global.G_CONFIG.Grpc.Client.Port = 5431
 	global.G_CONFIG.Grpc.Server.Network = "tcp"
+	global.G_LOG = zap.New(zapcore.NewTee(), zap.AddCaller())
+	luna.RegisterCasbin(&luna.UnimplementedCasbin{}) // 注入Casbin实现类
+	luna.RegisterJwt(&luna.UnimplementedJwt{})       // 注入Jwt实现类
+
 
 	go func() {
 		defer wg.Done()
 		grpc.NewServer().RegisterAuthServiceServer(&service.AuthService{}).LunchGrpcServer()
 	}()
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 1)
+	go func() {
+		j := luna.NewTOKEN() // 唯一签名
+		claims := j.CreateClaims(luna.BaseClaims{
+			UUID:    uuid.NewV4(),
+			ID:      100001,
+			Name:    "test",
+			Account: "test",
+			RoleIds: []string{"101"},
+		})
+		token, _ := j.CreateToken(claims)
+
+		for {
+			time.Sleep(time.Second * 2)
+			conn, client := star.GetGrpcClient()
+			r, e := client.GrantedAuthority(context.Background(), &pb.Policy{
+
 	go func() {
 		for {
-			j := luna.NewTOKEN() // 唯一签名
-			claims := j.CreateClaims(luna.BaseClaims{
-				UUID:        uuid.NewV4(),
-				ID:          100001,
-				Name:        "test",
-				Account:     "test",
-				AuthorityId: "101",
-				Authority:   nil,
-			})
-			token, err := j.CreateToken(claims)
-			if err != nil {
-				continue
-			}
+			
 			conn, client := star.GetGrpcClient()
 			r, e := client.GetUser(context.Background(), &pb.Token{
+
 				Token: token,
 			})
 			if e != nil {
 				fmt.Errorf(e.Error())
 			}
-			fmt.Println(r)
+
+			fmt.Println("Result:", r)
+			fmt.Println()
+			fmt.Println("----------------------------------------------")
+			if r.NewToken != "" {
+				token = r.NewToken
+			}
+			if r.Msg == "Authorization has expired" {
+				break
+			}
 			star.CloseConn(conn)
-			time.Sleep(time.Second)
+
 		}
 	}()
 	wg.Wait()

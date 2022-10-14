@@ -10,9 +10,9 @@ message Token {
 
 // path和method请求验证策略
 message Policy {
-    string path = 1;
-    string method = 2;
-    string authorityId = 3;
+    string token = 1;
+    string path = 2;
+    string method = 3;
     string key = 4;
 }
 
@@ -21,6 +21,7 @@ message Result {
     string msg = 2;
     CustomClaims claims = 3;
     string key = 4;
+    string newToken = 5;
 }
 
 message HearBeat {
@@ -34,7 +35,7 @@ message Receipe {
 message User {
     int64  userID       = 1;
     string UUID         = 2;
-    string authorityId    = 3;
+    repeated string roleIds    = 3;
     CustomClaims claims = 4;
     string key = 5;
 }
@@ -48,7 +49,7 @@ message CustomClaims {
 message BaseClaims {
     int64  userID       = 1;
     string UUID         = 2;
-    string authorityId    = 3;
+    repeated string roleIds    = 3;
     string account     = 4;
     string name     = 5;
 }

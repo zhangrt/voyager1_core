@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	MINIO = "minio"
+)
+
 // OSS 对象存储接口
 type OSS interface {
 	UploadFile(ctx *gin.Context, file *multipart.FileHeader) (string, string, error)
@@ -19,7 +23,7 @@ type OSS interface {
 // NewOss OSS的实例化方法
 func NewOss() OSS {
 	switch global.G_CONFIG.System.OssType {
-	case "minio":
+	case MINIO:
 		return &Minio{}
 	default:
 		return nil

@@ -1,5 +1,7 @@
 package util
 
+// 数据结构体之间转化的工具方法
+
 import (
 	"reflect"
 	"unsafe"
@@ -29,19 +31,47 @@ func ZinxProtoUser2Claims(result *zinx_pb.User) *luna.CustomClaims {
 	return ZinxProtoClaimsTransformClaims(result.Claims)
 }
 
-func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomClaims {
+func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.CustomClaims {
+	if claims == nil {
+		return nil
+	}
+	result := &grpc_pb.CustomClaims{
+		Claims: &grpc_pb.BaseClaims{
+			UserID:  int64(claims.ID),
+			UUID:    claims.UUID.String(),
+			Account: claims.BaseClaims.Account,
+			Name:    claims.BaseClaims.Name,
+			RoleIds: claims.BaseClaims.RoleIds,
+		},
+		BufferTime: claims.BufferTime,
+		Standard: &grpc_pb.StandardClaims{
+			Audience:  claims.StandardClaims.Audience,
+			ExpiresAt: claims.StandardClaims.ExpiresAt,
+			Id:        claims.StandardClaims.Id,
+			IssuedAt:  claims.StandardClaims.IssuedAt,
+			Issuer:    claims.StandardClaims.Issuer,
+			NotBefore: claims.StandardClaims.NotBefore,
+			Subject:   claims.StandardClaims.Subject,
+		},
+	}
+	return result
+}
 
+func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomClaims {
+	if result == nil {
+		return nil
+	}
 	s := result.Claims.UUID
 
 	bys := String2BytesSlicePlus(s)
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:          uint(result.Claims.UserID),
-			UUID:        uuid.FromBytesOrNil(bys),
-			Account:     result.Claims.Account,
-			Name:        result.Claims.Name,
-			AuthorityId: result.Claims.AuthorityId,
+			ID:      uint(result.Claims.UserID),
+			UUID:    uuid.FromBytesOrNil(bys),
+			Account: result.Claims.Account,
+			Name:    result.Claims.Name,
+			RoleIds: result.Claims.RoleIds,
 		},
 		BufferTime: result.BufferTime,
 		StandardClaims: jwt.StandardClaims{
@@ -59,18 +89,20 @@ func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomCl
 }
 
 func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomClaims {
-
+	if result == nil {
+		return nil
+	}
 	s := result.Claims.UUID
 
 	bys := String2BytesSlicePlus(s)
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:          uint(result.Claims.UserID),
-			UUID:        uuid.FromBytesOrNil(bys),
-			Account:     result.Claims.Account,
-			Name:        result.Claims.Name,
-			AuthorityId: result.Claims.AuthorityId,
+			ID:      uint(result.Claims.UserID),
+			UUID:    uuid.FromBytesOrNil(bys),
+			Account: result.Claims.Account,
+			Name:    result.Claims.Name,
+			RoleIds: result.Claims.RoleIds,
 		},
 		BufferTime: result.BufferTime,
 		StandardClaims: jwt.StandardClaims{
