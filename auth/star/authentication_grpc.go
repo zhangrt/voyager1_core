@@ -11,7 +11,7 @@ import (
 // 授权鉴权接口Grpc的实现
 type AuthenticationGrpc struct{}
 
-func (authentication *AuthenticationGrpc) GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims) {
+func (authentication *AuthenticationGrpc) GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims, string) {
 	var r bool
 	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
@@ -25,5 +25,5 @@ func (authentication *AuthenticationGrpc) GrantedAuthority(token string, path st
 	} else {
 		r = result.Success
 	}
-	return r, result.Msg, util.GrpcProtoClaimsTransformClaims(result.Claims)
+	return r, result.Msg, util.GrpcProtoClaimsTransformClaims(result.Claims), result.NewToken
 }

@@ -145,9 +145,10 @@ func (s *Star) CheckToken(req *pb.Token) {
 func (s *Star) AuthenticationRequest(req *pb.Policy) {
 	msg := &pb.Result{}
 	msg.Key = req.Key
-	success, m, _ := auth.CheckAuth(req.Token, req.Path, req.Method)
+	success, m, n, _ := auth.CheckAuth(req.Token, req.Path, req.Method)
 	msg.Success = success
 	msg.Msg = m
+	msg.NewToken = n
 	s.SendMsg(constant.POLICY_RES, msg)
 }
 

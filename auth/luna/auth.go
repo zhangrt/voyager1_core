@@ -1,12 +1,10 @@
 package luna
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_core/global"
 	"go.uber.org/zap"
 )
@@ -32,16 +30,16 @@ func Enforce(c *gin.Context) (bool, error) {
 }
 
 // token鉴权 & 校验path method的权限
-func CheckAuth(token string, obj string, act string) (bool, string, error) {
-	s, m, c, e := ReadAuthentication(token)
+func CheckAuth(token string, obj string, act string) (bool, string, string, error) {
+	s, m, c, n, e := ReadAuthentication(token)
 	if !s {
-		return s, m, e
+		return s, m, n, e
 	}
 	s, e = CheckPolicy(c.RoleIds, obj, act)
 	if e != nil {
-		return s, e.Error(), e
+		return s, e.Error(), n, e
 	}
-	return s, m, e
+	return s, m, n, e
 }
 
 func CheckPolicy(sub []string, obj string, act string) (bool, error) {
@@ -55,21 +53,22 @@ func CheckPolicy(sub []string, obj string, act string) (bool, error) {
 }
 
 // 读取Token验证Token合法性与过期时间校验
-func ReadAuthentication(token string) (bool, string, *CustomClaims, error) {
+func ReadAuthentication(token string) (bool, string, *CustomClaims, string, error) {
 	var success = false
 	var msg = ""
+	var newToken = ""
 	once.Do(func() {
 		ijwt = NewJWT()
 	})
 	if token == "" {
 		msg = "Not logged in or accessed illegally"
 		success = false
-		return success, msg, nil, nil
+		return success, msg, nil, newToken, nil
 	}
 	if ijwt.IsBlacklist(token) {
 		msg = "Your account is off-site logged in or the token is invalid"
 		success = false
-		return success, msg, nil, nil
+		return success, msg, nil, newToken, nil
 	}
 	j := NewTOKEN()
 	// parseToken 解析token包含的信息
@@ -78,11 +77,11 @@ func ReadAuthentication(token string) (bool, string, *CustomClaims, error) {
 		if err == TokenExpired {
 			msg = "Authorization has expired"
 			success = false
-			return success, msg, nil, nil
+			return success, msg, nil, newToken, nil
 		}
 		msg = err.Error()
 		success = false
-		return success, msg, nil, err
+		return success, msg, nil, newToken, err
 	}
 	// 解析token成功
 	success = true
@@ -91,10 +90,9 @@ func ReadAuthentication(token string) (bool, string, *CustomClaims, error) {
 	now := time.Now().Unix()
 	if claims.ExpiresAt-now < claims.BufferTime {
 		claims.ExpiresAt = now + global.G_CONFIG.JWT.ExpiresTime
-		newToken, _ := j.CreateTokenByOldToken(token, *claims)
+		newToken, _ = j.CreateTokenByOldToken(token, *claims)
 		newClaims, _ := j.ParseToken(newToken)
-		// 将 New Token 存在 Msg 中
-		msg = fmt.Sprintf("%s"+constant.MARKER+"%d", newToken, newClaims.ExpiresAt)
+		msg = "The token is about to expire, so we create a new token"
 		// 存 New Claims
 		claims = newClaims
 		// 单点, 在 Server 端进行拉黑
@@ -109,5 +107,5 @@ func ReadAuthentication(token string) (bool, string, *CustomClaims, error) {
 			_ = ijwt.SetCacheJWT(newToken, newClaims.Account)
 		}
 	}
-	return success, msg, claims, nil
+	return success, msg, claims, newToken, nil
 }

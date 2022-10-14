@@ -21,6 +21,7 @@ message Result {
     string msg = 2;
     CustomClaims claims = 3;
     string key = 4;
+    string newToken = 5;
 }
 
 message HearBeat {

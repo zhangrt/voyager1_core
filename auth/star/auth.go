@@ -8,7 +8,7 @@ import (
 // star 请求 luna的接口进行鉴权与授权
 type AUTH interface {
 	// Token校验并验证request中的path和method权限
-	GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims)
+	GrantedAuthority(token string, path string, method string) (bool, string, *luna.CustomClaims, string)
 }
 
 // 通过传入实现类型返回默认的接口实现，impl => 1. grpc(tcp、udp...)、 2. zinx(tcp、udp)

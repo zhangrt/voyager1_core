@@ -26,6 +26,7 @@ message Result {
     bool success = 1;
     string msg = 2;
     CustomClaims claims = 3;
+    string newToken = 4;
 }
 message User {
     int64  userID       = 1;
