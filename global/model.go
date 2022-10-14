@@ -64,25 +64,20 @@ type GS_BASE_USER struct {
 	// 用户登录密码
 	Password string `json:"-"  gorm:"comment:用户登录密码"`
 	// 昵称
-	Name string `json:"name" gorm:"default:系统用户;comment:用户昵称"`
+	Name     string `json:"name" gorm:"default:系统用户;comment:用户昵称"`
+	Age      string `json:"age" gorm:"comment:年龄"`
+	Gender   string `json:"gender" gorm:"comment:性别"`
+	SerialNo string `json:"serialNo" gorm:"comment:排序字段"`
 	// 用户侧边主题
-	SideMode string `json:"sideMode" gorm:"default:dark;comment:用户主题"`
+	// SideMode string `json:"sideMode" gorm:"default:dark;comment:用户主题"`
 	// 用户头像
 	Avatar string `json:"avatar" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"`
-	// 部门Id
-	DepartMentId string `json:"departmentId" gorm:"default:11111;comment:部门ID"`
-	// 部门名称
-	DepartMentName string `json:"departmentName" gorm:"default:综管部;comment:部门名称"`
-	// 单位Id
-	OrganizationId string `json:"organizationId" gorm:"default:888;comment:单位ID"`
-	// 单位名称
-	OrganizationName string `json:"organizationName" gorm:"default:888;comment:单位名称"`
 	// 用户手机号
 	Phone string `json:"phone"  gorm:"comment:用户手机号"`
 	// 用户邮箱
 	Email string `json:"email"  gorm:"comment:用户邮箱"`
 	// 用户锁定
-	Locked int `json:"locked"  gorm:"column:locked;size:1;comment:用户锁定"`
+	Locked bool `json:"locked"  gorm:"column:locked;size:1;comment:用户锁定"`
 	// 锁定时间
 	LockTime time.Time `json:"lockTime"  gorm:"column:lock_time;comment:用户锁定时间"`
 	// 最后一次登录时间
