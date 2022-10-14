@@ -25,3 +25,4 @@
 ## 配置文件
 
 `/conf/zinx.json 在外部引入组件时，优先会读取外部工程中/conf目录下zinx.json文件`
+

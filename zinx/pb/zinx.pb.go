@@ -120,6 +120,7 @@ func (*Policy) Descriptor() ([]byte, []int) {
 	return file_zinx_proto_rawDescGZIP(), []int{1}
 }
 
+
 func (x *Policy) GetToken() string {
 	if x != nil {
 		return x.Token
