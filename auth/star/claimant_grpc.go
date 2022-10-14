@@ -28,11 +28,11 @@ func (claimant *ClaimantGrpc) GetUser(token string) (*luna.CustomClaims, error) 
 	return claims, err
 }
 
-func (claimant *ClaimantGrpc) GetUserID(token string) uint {
-	var ID uint
+func (claimant *ClaimantGrpc) GetUserID(token string) string {
+	var ID string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		ID = claims.ID
+		ID = claims.ID.String()
 	}
 	return ID
 }
@@ -41,7 +41,7 @@ func (claimant *ClaimantGrpc) GetUserUUID(token string) uuid.UUID {
 	var UUID uuid.UUID
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		UUID = claims.UUID
+		UUID = claims.ID
 	}
 	return UUID
 }

@@ -9,7 +9,7 @@ import (
 // 获取用户信息接口
 type CLAIM interface {
 	GetUser(token string) (*luna.CustomClaims, error)
-	GetUserID(token string) uint
+	GetUserID(token string) string
 	GetUserUUID(token string) uuid.UUID
 	GetUserAuthorityId(token string) []string
 }

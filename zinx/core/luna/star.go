@@ -159,8 +159,7 @@ func (s *Star) GetUserInfo(req *pb.Token) {
 	claims, _ := auth.GetUser(req.Token)
 	if claims != nil {
 		msg.Claims = protoTransformClaims(claims)
-		msg.UserID = int64(claims.ID)
-		msg.UUID = claims.UUID.String()
+		msg.ID = claims.Id
 		msg.RoleIds = claims.RoleIds
 	}
 	s.SendMsg(constant.USER_RES, msg)
@@ -176,8 +175,7 @@ func (s *Star) Receipe(id int32) {
 func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
 	p := pb.CustomClaims{
 		Claims: &pb.BaseClaims{
-			UserID:  int64(c.BaseClaims.ID),
-			UUID:    c.BaseClaims.UUID.String(),
+			ID:      c.BaseClaims.ID.String(),
 			RoleIds: c.BaseClaims.RoleIds,
 			Account: c.BaseClaims.Account,
 			Name:    c.BaseClaims.Name,

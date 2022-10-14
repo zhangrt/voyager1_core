@@ -80,8 +80,7 @@ func (auth *AuthService) GetUser(c context.Context, p *pb.Token) (*pb.User, erro
 	claims, _ := luna.GetUser(p.Token)
 	if claims != nil {
 		user.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
-		user.UserID = int64(claims.ID)
-		user.UUID = claims.UUID.String()
+		user.ID = claims.Id
 		user.RoleIds = claims.RoleIds
 	}
 	return user, nil

@@ -55,8 +55,7 @@ func TestGrpc(t *testing.T) {
 	go func() {
 		j := luna.NewTOKEN() // 唯一签名
 		claims := j.CreateClaims(luna.BaseClaims{
-			UUID:    uuid.NewV4(),
-			ID:      100001,
+			ID:      uuid.NewV4(),
 			Name:    "test",
 			Account: "test",
 			RoleIds: []string{"101"},
@@ -66,6 +65,7 @@ func TestGrpc(t *testing.T) {
 		for {
 			time.Sleep(time.Second * 2)
 			conn, client := star.GetGrpcClient()
+			defer star.CloseConn(conn)
 			r, e := client.GrantedAuthority(context.Background(), &pb.Policy{
 				Token: token,
 			})
@@ -74,14 +74,19 @@ func TestGrpc(t *testing.T) {
 			}
 			fmt.Println("Result:", r)
 			fmt.Println()
-			fmt.Println("----------------------------------------------")
 			if r.NewToken != "" {
 				token = r.NewToken
 			}
 			if r.Msg == "Authorization has expired" {
 				break
 			}
-			star.CloseConn(conn)
+			u, err := client.GetUser(context.Background(), &pb.Token{
+				Token: token,
+			})
+			if err == nil {
+				fmt.Println("USER:", u)
+			}
+			fmt.Println("----------------------------------------------")
 		}
 	}()
 	wg.Wait()

@@ -23,16 +23,16 @@ func GetUser(token string) (*CustomClaims, error) {
 }
 
 // GetUserID 从Gin的Context中获取从jwt解析出来的用户ID
-func GetUserID(c *gin.Context) uint {
+func GetUserID(c *gin.Context) string {
 	if claims, exists := c.Get(global.G_CONFIG.AUTHKey.User); !exists {
 		if cl, err := GetClaims(c); err != nil {
-			return 0
+			return ""
 		} else {
-			return cl.ID
+			return cl.ID.String()
 		}
 	} else {
 		waitUse := claims.(*CustomClaims)
-		return waitUse.ID
+		return waitUse.ID.String()
 	}
 }
 
@@ -42,11 +42,11 @@ func GetUserUUID(c *gin.Context) uuid.UUID {
 		if cl, err := GetClaims(c); err != nil {
 			return uuid.UUID{}
 		} else {
-			return cl.UUID
+			return cl.ID
 		}
 	} else {
 		waitUse := claims.(*CustomClaims)
-		return waitUse.UUID
+		return waitUse.ID
 	}
 }
 
