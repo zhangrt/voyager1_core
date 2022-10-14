@@ -3,8 +3,6 @@ package global
 import (
 	"time"
 
-	uuid "github.com/satori/go.uuid"
-
 	"gorm.io/gorm"
 )
 
@@ -58,9 +56,9 @@ type GS_BASE_MODEL_ID_NONE struct {
 // v0.2 针对基础业务做封装，被上层业务user结构体引用
 type GS_BASE_USER struct {
 	// 适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用
-	ID uint `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
+	ID string `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
 	// UUID 通用的标准用户id，数据库存储为字符串在某些方面会更通用更好用
-	UUID uuid.UUID `json:"uuid" gorm:"comment:用户UUID"`
+	// UUID uuid.UUID `json:"uuid" gorm:"comment:用户UUID"`
 	// 用户名
 	Account string `json:"account" gorm:"comment:用户登录名"`
 	// 用户登录密码
