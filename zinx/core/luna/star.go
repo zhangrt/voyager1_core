@@ -76,7 +76,7 @@ func (s *Star) SendMsg(msgID uint32, data proto.Message) {
 var jwt = auth.NewJWT()
 
 // 验证token合法并将结果发送回客户端 star
-func (s *Star) CheckToken(req *pb.Token) {
+func (s *Star) CheckToken(req *pb.Authentication) {
 	token := req.Token
 	msg := &pb.Result{}
 	msg.Key = req.Key
@@ -153,7 +153,7 @@ func (s *Star) AuthenticationRequest(req *pb.Policy) {
 }
 
 // 获取用户信息
-func (s *Star) GetUserInfo(req *pb.Token) {
+func (s *Star) GetUserInfo(req *pb.Authentication) {
 	msg := &pb.User{}
 	msg.Key = req.Key
 	claims, _ := auth.GetUser(req.Token)

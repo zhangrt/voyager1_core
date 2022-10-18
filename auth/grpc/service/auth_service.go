@@ -75,7 +75,7 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 }
 
 // 通过Token获取用户信息
-func (auth *AuthService) GetUser(c context.Context, p *pb.Token) (*pb.User, error) {
+func (auth *AuthService) GetUser(c context.Context, p *pb.Authentication) (*pb.User, error) {
 	user := new(pb.User)
 	claims, _ := luna.GetUser(p.Token)
 	if claims != nil {

@@ -3,7 +3,7 @@ option go_package = "./";               //不指定会报错
 package pb;						        //后期生成go文件的包名
 
 // token 鉴权
-message Token {
+message Authentication {
     string token = 1;
     string key = 2;
 }

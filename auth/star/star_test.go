@@ -80,7 +80,7 @@ func TestGrpc(t *testing.T) {
 			if r.Msg == "Authorization has expired" {
 				break
 			}
-			u, err := client.GetUser(context.Background(), &pb.Token{
+			u, err := client.GetUser(context.Background(), &pb.Authentication{
 				Token: token,
 			})
 			if err == nil {

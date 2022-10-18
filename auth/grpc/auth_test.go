@@ -69,7 +69,7 @@ func TestAuth(t *testing.T) {
 				if err != nil {
 					continue
 				}
-				res, err := authClient.GetUser(context.Background(), &pb.Token{
+				res, err := authClient.GetUser(context.Background(), &pb.Authentication{
 					Token: token,
 				})
 				if err != nil {

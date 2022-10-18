@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	GrantedAuthority(ctx context.Context, in *Policy, opts ...grpc.CallOption) (*Result, error)
-	GetUser(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error)
+	GetUser(ctx context.Context, in *Authentication, opts ...grpc.CallOption) (*User, error)
 }
 
 type authServiceClient struct {
@@ -43,7 +43,7 @@ func (c *authServiceClient) GrantedAuthority(ctx context.Context, in *Policy, op
 	return out, nil
 }
 
-func (c *authServiceClient) GetUser(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error) {
+func (c *authServiceClient) GetUser(ctx context.Context, in *Authentication, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/auth.grpc.pb.service.AuthService/GetUser", in, out, opts...)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *authServiceClient) GetUser(ctx context.Context, in *Token, opts ...grpc
 // for forward compatibility
 type AuthServiceServer interface {
 	GrantedAuthority(context.Context, *Policy) (*Result, error)
-	GetUser(context.Context, *Token) (*User, error)
+	GetUser(context.Context, *Authentication) (*User, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -68,7 +68,7 @@ type UnimplementedAuthServiceServer struct {
 func (UnimplementedAuthServiceServer) GrantedAuthority(context.Context, *Policy) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantedAuthority not implemented")
 }
-func (UnimplementedAuthServiceServer) GetUser(context.Context, *Token) (*User, error) {
+func (UnimplementedAuthServiceServer) GetUser(context.Context, *Authentication) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
@@ -103,7 +103,7 @@ func _AuthService_GrantedAuthority_Handler(srv interface{}, ctx context.Context,
 }
 
 func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
+	in := new(Authentication)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/auth.grpc.pb.service.AuthService/GetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetUser(ctx, req.(*Token))
+		return srv.(AuthServiceServer).GetUser(ctx, req.(*Authentication))
 	}
 	return interceptor(ctx, in, info, handler)
 }

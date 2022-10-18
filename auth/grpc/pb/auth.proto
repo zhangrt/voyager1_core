@@ -7,11 +7,11 @@ service AuthService {
 
     rpc GrantedAuthority(Policy) returns (Result) {};
 
-    rpc GetUser(Token)returns (User) {};
+    rpc GetUser(Authentication)returns (User) {};
 }
 
 // token 鉴权
-message Token {
+message Authentication {
     string token = 1;
 }
 

@@ -18,7 +18,7 @@ func (claimant *ClaimantGrpc) GetUser(token string) (*luna.CustomClaims, error) 
 	claims := new(luna.CustomClaims)
 	conn, client := GetGrpcClient()
 	defer CloseConn(conn)
-	result, err := client.GetUser(context.Background(), &pb.Token{
+	result, err := client.GetUser(context.Background(), &pb.Authentication{
 		Token: token,
 	})
 	if err != nil {

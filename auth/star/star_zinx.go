@@ -19,7 +19,7 @@ func StartClient() {
 
 func SendProtoTokenMsg(token string, msgId uint32) string {
 	key := uuid.NewV4().String()
-	star.StatelliteMgrObj.AddTokenReq(key, &pb.Token{
+	star.StatelliteMgrObj.AddTokenReq(key, &pb.Authentication{
 		Key:   key,
 		Token: token,
 	})
