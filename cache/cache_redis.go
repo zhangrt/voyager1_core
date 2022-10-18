@@ -61,6 +61,11 @@ func (redisCache *RedisCache) Set(key string, value interface{}) error {
 	return err
 }
 
+func (redisCache *RedisCache) SetX(key string, value interface{}, expiration time.Duration) error {
+	err := redis_Cache.Set(ctx, key, value, expiration).Err()
+	return err
+}
+
 func (redisCache *RedisCache) LPush(key string, value ...interface{}) error {
 	err := redis_Cache.LPush(ctx, key, value).Err()
 	return err

@@ -21,6 +21,7 @@ type Cacher interface {
 	Get(key string) (string, error)
 	//Set 设置数据 默认不过期
 	Set(key string, value interface{}) error
+	SetX(key string, value interface{}, expiration time.Duration) error
 	//LPush 从列表的头部进行添加
 	LPush(key string, value ...interface{}) error
 	//RPush 使用RPush命令往队列右边加入

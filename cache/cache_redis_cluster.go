@@ -76,6 +76,11 @@ func (redisClusterCache *RedisClusterCache) Set(key string, value interface{}) e
 	return err
 }
 
+func (redisClusterCache *RedisClusterCache) SetX(key string, value interface{}, expiration time.Duration) error {
+	err := redisCluster.Set(ctx, key, value, expiration).Err()
+	return err
+}
+
 func (redisClusterCache *RedisClusterCache) LPush(key string, value ...interface{}) error {
 	err := redisCluster.LPush(ctx, key, value).Err()
 	return err
