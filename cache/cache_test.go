@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/zhangrt/voyager1_core/config"
+	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_core/global"
 )
 
@@ -15,7 +16,7 @@ func TestCacheFactory_Create(t *testing.T) {
 	c := config.Cache{}
 	c.Addr = "localhost:49153"
 	c.Password = "redispw"
-	c.Options = "G_REDIS_STANDALONE"
+	c.Options = constant.REDIS_STANDALONE
 	global.G_CONFIG.Cache = c
 	Cache := CreateCache() //在初始化配置参数后，创建缓存组件，将Cache可以保存在一个全局变量使用
 	var err error
