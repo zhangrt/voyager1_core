@@ -111,3 +111,8 @@ func (Core *Core) ConfigGrpc(c config.Grpc) *Core {
 	global.G_CONFIG.Grpc = c
 	return Core
 }
+
+func (Core *Core) ConfigCache(c config.Cache) *Core {
+	global.G_CONFIG.Cache = c
+	return Core
+}

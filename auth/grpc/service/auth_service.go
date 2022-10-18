@@ -33,12 +33,12 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 	var err_ error
 	s, m, claims, n, err := luna.ReadAuthentication(p.Token)
 	result.Success = s
-	result.NewToken = n
 	result.Msg = m
+	result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
+	result.NewToken = n
 	// token不合法或过期等情况
 	if !s {
 		result.Msg = m
-		result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
 		return result, err
 	}
 	if p.Path == "" || p.Method == "" {
@@ -75,13 +75,12 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 }
 
 // 通过Token获取用户信息
-func (auth *AuthService) GetUser(c context.Context, p *pb.Token) (*pb.User, error) {
+func (auth *AuthService) GetUser(c context.Context, p *pb.Authentication) (*pb.User, error) {
 	user := new(pb.User)
 	claims, _ := luna.GetUser(p.Token)
 	if claims != nil {
 		user.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
-		user.UserID = int64(claims.ID)
-		user.UUID = claims.UUID.String()
+		user.ID = claims.Id
 		user.RoleIds = claims.RoleIds
 	}
 	return user, nil

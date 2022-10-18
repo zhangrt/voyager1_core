@@ -3,7 +3,7 @@ option go_package = "./";               //不指定会报错
 package pb;						        //后期生成go文件的包名
 
 // token 鉴权
-message Token {
+message Authentication {
     string token = 1;
     string key = 2;
 }
@@ -33,11 +33,10 @@ message Receipe {
 }
 
 message User {
-    int64  userID       = 1;
-    string UUID         = 2;
-    repeated string roleIds    = 3;
-    CustomClaims claims = 4;
-    string key = 5;
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    CustomClaims claims = 3;
+    string key = 4;
 }
 
 message CustomClaims {
@@ -47,11 +46,10 @@ message CustomClaims {
 }
 
 message BaseClaims {
-    int64  userID       = 1;
-    string UUID         = 2;
-    repeated string roleIds    = 3;
-    string account     = 4;
-    string name     = 5;
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    string account     = 3;
+    string name     = 4;
 }
 
 message StandardClaims {

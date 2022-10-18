@@ -8,4 +8,5 @@ type Server struct {
 	Minio   Minio   `mapstructure:"minio" json:"minio" yaml:"minio"`
 	Zinx    Zinx    `mapstructure:"zinx" json:"zinx" yaml:"zinx"`
 	Grpc    Grpc    `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
+	Cache   Cache   `mapstructure:"Cache" json:"Cache" yaml:"Cache"`
 }

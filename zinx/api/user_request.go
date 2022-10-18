@@ -17,7 +17,7 @@ type UserRequestApi struct {
 
 func (*UserRequestApi) Handle(request ziface.IRequest) {
 	//1. 将客户端传来的proto协议解码
-	msg := &pb.Token{}
+	msg := &pb.Authentication{}
 	err := proto.Unmarshal(request.GetData(), msg)
 	if err != nil {
 		fmt.Println("Move: Position Unmarshal error ", err)

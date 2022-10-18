@@ -2,7 +2,7 @@
 
 `众星 star 拱月 luna 的设计思想`
 
-luna 作为基础平台将对所有注册star的客户端服务进行授权鉴权,通信方式有TCP、GRPC、Rest等多种方式可选
+luna 作为基础平台将对所有注册star的客户端服务进行授权鉴权,通信方式有GRPC、Zinx、Rest等多种方式可选
 
 ## 平台基础组件luna包
 
@@ -18,6 +18,8 @@ luna 作为基础平台将对所有注册star的客户端服务进行授权鉴�
 
 * zinx和Grpc对比在于Zinx更轻量、自定义性更强且实现好了会更高效，而Grpc封装的更彻底、开发和使用也更简单
 
+* 使用GRPC在每次更改协议，只需要重新生成pb.go文件，业务代码的改动相比较会更少更简单，不必专门维护协议底层实现的代码
+
 ### proto 协议
 
 * 安装 protobuf编译器
@@ -26,8 +28,12 @@ luna 作为基础平台将对所有注册star的客户端服务进行授权鉴�
 
 * 编写proto文件 定义服务、rpc方法和message
 
-<https://grpc.io/docs/languages/go/basics>
+* <https://grpc.io/docs/languages/go/basics>
 
-* 生成proto文件
+* 使用GRPC生成proto相关文件
 
-`protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative  auth.proto`
+  `cd auth/grpc/pb`
+
+  `protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative  auth.proto`
+
+* 实现定义的GRPC接口 pb.UnimplementedAuthServiceServer

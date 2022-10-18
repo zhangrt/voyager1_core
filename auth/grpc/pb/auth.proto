@@ -7,11 +7,11 @@ service AuthService {
 
     rpc GrantedAuthority(Policy) returns (Result) {};
 
-    rpc GetUser(Token)returns (User) {};
+    rpc GetUser(Authentication)returns (User) {};
 }
 
 // token 鉴权
-message Token {
+message Authentication {
     string token = 1;
 }
 
@@ -29,10 +29,9 @@ message Result {
     string newToken = 4;
 }
 message User {
-    int64  userID       = 1;
-    string UUID         = 2;
-    repeated string roleIds    = 3;
-    CustomClaims claims = 4;
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    CustomClaims claims = 3;
 }
 
 message CustomClaims {
@@ -42,11 +41,10 @@ message CustomClaims {
 }
 
 message BaseClaims {
-    int64  userID       = 1;
-    string UUID         = 2;
-    repeated string roleIds    = 3;
-    string account     = 4;
-    string name     = 5;
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    string account     = 3;
+    string name     = 4;
 }
 
 message StandardClaims {

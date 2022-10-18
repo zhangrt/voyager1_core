@@ -6,7 +6,7 @@
 
 * go get github.com/zhangrt/voyager1_core
 
-* Init初始化 import "github.com/zhangrt/voyager1_core"  -> NewInit()
+* Init初始化 import "github.com/zhangrt/voyager1_core"  -> New() -> SetXXXX(config)
 
 ## 代码结构
 

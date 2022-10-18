@@ -12,13 +12,13 @@ import (
  pb 中的key为唯一标识
 */
 type Statellite struct {
-	TokenReq      map[string]*pb.Token  // token验证
-	PolicyReq     map[string]*pb.Policy // 权限校验
-	UserReq       map[string]*pb.Token  // 用户信息获取
-	ResultToken   map[string]*pb.Result // token验证结果
-	ResultPolicy  map[string]*pb.Result // 权限校验结果
-	ResultUser    map[string]*pb.User   // 用户信息获取结果
-	MsgKeys       map[string]uint32     // key - MsgID 存放唯一键值对key和请求ID
+	TokenReq      map[string]*pb.Authentication // token验证
+	PolicyReq     map[string]*pb.Policy         // 权限校验
+	UserReq       map[string]*pb.Authentication // 用户信息获取
+	ResultToken   map[string]*pb.Result         // token验证结果
+	ResultPolicy  map[string]*pb.Result         // 权限校验结果
+	ResultUser    map[string]*pb.User           // 用户信息获取结果
+	MsgKeys       map[string]uint32             // key - MsgID 存放唯一键值对key和请求ID
 	keyLock       sync.RWMutex
 	setTokenLock  sync.RWMutex
 	setPolicyLock sync.RWMutex
@@ -38,9 +38,9 @@ var (
 func init() {
 	StatelliteMgrObj = &Statellite{
 		MsgKeys:      map[string]uint32{},
-		TokenReq:     make(map[string]*pb.Token),
+		TokenReq:     make(map[string]*pb.Authentication),
 		PolicyReq:    make(map[string]*pb.Policy),
-		UserReq:      make(map[string]*pb.Token),
+		UserReq:      make(map[string]*pb.Authentication),
 		ResultToken:  make(map[string]*pb.Result), // token验证结果
 		ResultPolicy: make(map[string]*pb.Result), // 权限校验结果
 		ResultUser:   make(map[string]*pb.User),   // 用户信息结果
@@ -148,7 +148,7 @@ func (statellite *Statellite) GetUserResult(key string) *pb.User {
 
 // -------------------------------------------------------------------------Request---------------------------------------------------------------------------
 // --------------------------------token-----------------------------------
-func (statellite *Statellite) AddTokenReq(key string, pb *pb.Token) {
+func (statellite *Statellite) AddTokenReq(key string, pb *pb.Authentication) {
 	statellite.setTokenLock.Lock()
 	pb.Key = key
 	statellite.TokenReq[key] = pb
@@ -161,7 +161,7 @@ func (statellite *Statellite) RemoveStarByPID(key string) {
 	statellite.setTokenLock.Unlock()
 }
 
-func (statellite *Statellite) GetTokenReq(key string) *pb.Token {
+func (statellite *Statellite) GetTokenReq(key string) *pb.Authentication {
 	statellite.setTokenLock.RLock()
 	defer statellite.setTokenLock.RUnlock()
 
@@ -190,7 +190,7 @@ func (statellite *Statellite) GetPolicyReq(key string) *pb.Policy {
 }
 
 // --------------------------------user-----------------------------------
-func (statellite *Statellite) AddUserReq(key string, pb *pb.Token) {
+func (statellite *Statellite) AddUserReq(key string, pb *pb.Authentication) {
 	statellite.setUserLock.Lock()
 	pb.Key = key
 	statellite.UserReq[key] = pb
@@ -203,7 +203,7 @@ func (statellite *Statellite) RemoveUserReq(key string) {
 	statellite.setUserLock.Unlock()
 }
 
-func (statellite *Statellite) GetUserReq(key string) *pb.Token {
+func (statellite *Statellite) GetUserReq(key string) *pb.Authentication {
 	statellite.setUserLock.RLock()
 	defer statellite.setUserLock.RUnlock()
 

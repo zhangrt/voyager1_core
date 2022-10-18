@@ -37,8 +37,7 @@ func GrpcLunaClaimsTransformProtoClaims(claims *luna.CustomClaims) *grpc_pb.Cust
 	}
 	result := &grpc_pb.CustomClaims{
 		Claims: &grpc_pb.BaseClaims{
-			UserID:  int64(claims.ID),
-			UUID:    claims.UUID.String(),
+			ID:      claims.Id,
 			Account: claims.BaseClaims.Account,
 			Name:    claims.BaseClaims.Name,
 			RoleIds: claims.BaseClaims.RoleIds,
@@ -61,14 +60,13 @@ func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomCl
 	if result == nil {
 		return nil
 	}
-	s := result.Claims.UUID
+	s := result.Claims.ID
 
 	bys := String2BytesSlicePlus(s)
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:      uint(result.Claims.UserID),
-			UUID:    uuid.FromBytesOrNil(bys),
+			ID:      uuid.FromBytesOrNil(bys),
 			Account: result.Claims.Account,
 			Name:    result.Claims.Name,
 			RoleIds: result.Claims.RoleIds,
@@ -92,14 +90,13 @@ func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomCl
 	if result == nil {
 		return nil
 	}
-	s := result.Claims.UUID
+	s := result.Claims.ID
 
 	bys := String2BytesSlicePlus(s)
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:      uint(result.Claims.UserID),
-			UUID:    uuid.FromBytesOrNil(bys),
+			ID:      uuid.FromBytesOrNil(bys),
 			Account: result.Claims.Account,
 			Name:    result.Claims.Name,
 			RoleIds: result.Claims.RoleIds,

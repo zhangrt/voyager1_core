@@ -12,6 +12,11 @@ const (
 	CACHE_TOKEN_PREFIX = "$token:"
 )
 
+const (
+	REDIS_STANDALONE = "0"
+	REDIS_CLUSTER    = "1"
+)
+
 // Zinx
 const (
 	TOKEN_REQ  = 1

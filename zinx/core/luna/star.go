@@ -76,7 +76,7 @@ func (s *Star) SendMsg(msgID uint32, data proto.Message) {
 var jwt = auth.NewJWT()
 
 // 验证token合法并将结果发送回客户端 star
-func (s *Star) CheckToken(req *pb.Token) {
+func (s *Star) CheckToken(req *pb.Authentication) {
 	token := req.Token
 	msg := &pb.Result{}
 	msg.Key = req.Key
@@ -153,14 +153,13 @@ func (s *Star) AuthenticationRequest(req *pb.Policy) {
 }
 
 // 获取用户信息
-func (s *Star) GetUserInfo(req *pb.Token) {
+func (s *Star) GetUserInfo(req *pb.Authentication) {
 	msg := &pb.User{}
 	msg.Key = req.Key
 	claims, _ := auth.GetUser(req.Token)
 	if claims != nil {
 		msg.Claims = protoTransformClaims(claims)
-		msg.UserID = int64(claims.ID)
-		msg.UUID = claims.UUID.String()
+		msg.ID = claims.Id
 		msg.RoleIds = claims.RoleIds
 	}
 	s.SendMsg(constant.USER_RES, msg)
@@ -176,8 +175,7 @@ func (s *Star) Receipe(id int32) {
 func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
 	p := pb.CustomClaims{
 		Claims: &pb.BaseClaims{
-			UserID:  int64(c.BaseClaims.ID),
-			UUID:    c.BaseClaims.UUID.String(),
+			ID:      c.BaseClaims.ID.String(),
 			RoleIds: c.BaseClaims.RoleIds,
 			Account: c.BaseClaims.Account,
 			Name:    c.BaseClaims.Name,
