@@ -26,7 +26,8 @@ var redis_Cache *redis.Client
 
 func createRedis() (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:     global.G_CONFIG.Cache.Addr,     // redis地址
+		Addr:     global.G_CONFIG.Cache.Addr, // redis地址
+		Username: global.G_CONFIG.Cache.Username,
 		Password: global.G_CONFIG.Cache.Password, // redis密码，没有设置，则留空
 		DB:       0,                              // 使用默sss数据库
 	})

@@ -28,6 +28,7 @@ var redisCluster *redis.ClusterClient
 func createRedisCluster() (*redis.ClusterClient, error) {
 	redisCluster := redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs:    global.G_CONFIG.Cache.Addrs,
+		Username: global.G_CONFIG.Cache.Username,
 		Password: global.G_CONFIG.Cache.Password,
 		ReadOnly: false,
 
