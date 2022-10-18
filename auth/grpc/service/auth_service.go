@@ -33,12 +33,12 @@ func (auth *AuthService) GrantedAuthority(c context.Context, p *pb.Policy) (*pb.
 	var err_ error
 	s, m, claims, n, err := luna.ReadAuthentication(p.Token)
 	result.Success = s
-	result.NewToken = n
 	result.Msg = m
+	result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
+	result.NewToken = n
 	// token不合法或过期等情况
 	if !s {
 		result.Msg = m
-		result.Claims = util.GrpcLunaClaimsTransformProtoClaims(claims)
 		return result, err
 	}
 	if p.Path == "" || p.Method == "" {
