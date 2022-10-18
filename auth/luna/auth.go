@@ -42,12 +42,20 @@ func CheckAuth(token string, obj string, act string) (bool, string, string, erro
 	return s, m, n, e
 }
 
-func CheckPolicy(sub []string, obj string, act string) (bool, error) {
+func CheckPolicy(subs []string, obj string, act string) (bool, error) {
 
 	e := auth.Casbin()
 	// 判断策略中是否存在
-	success, err := e.Enforce(sub, obj, act)
-	return success, err
+	for _, sub := range subs {
+		success, err := e.Enforce(sub, obj, act)
+		if err != nil {
+			return false, err
+		}
+		if success {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 // 读取Token验证Token合法性与过期时间校验
