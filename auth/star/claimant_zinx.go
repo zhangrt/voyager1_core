@@ -3,7 +3,6 @@ package star
 import (
 	"time"
 
-	uuid "github.com/satori/go.uuid"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/constant"
 	util "github.com/zhangrt/voyager1_core/util"
@@ -50,18 +49,9 @@ func (claimant *ClaimantZinx) GetUserID(token string) string {
 	var ID string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		ID = claims.ID.String()
+		ID = claims.ID
 	}
 	return ID
-}
-
-func (claimant *ClaimantZinx) GetUserUUID(token string) uuid.UUID {
-	var UUID uuid.UUID
-	claims, err := claimant.GetUser(token)
-	if err != nil {
-		UUID = claims.ID
-	}
-	return UUID
 }
 
 func (claimant *ClaimantZinx) GetUserAuthorityId(token string) []string {

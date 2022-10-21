@@ -4,7 +4,6 @@ import (
 	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/golang-jwt/jwt/v4"
-	uuid "github.com/satori/go.uuid"
 )
 
 type JwtBlacklist struct {
@@ -25,7 +24,7 @@ type BaseClaims struct {
 	// UUID uuid.UUID
 	// ID 一般对应于数组库默认的自增主键
 	// ID uint
-	ID uuid.UUID
+	ID string
 	// 用户名
 	Account string
 	Phone   string

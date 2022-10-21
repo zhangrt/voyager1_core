@@ -7,7 +7,6 @@ import (
 	"unsafe"
 
 	"github.com/golang-jwt/jwt/v4"
-	uuid "github.com/satori/go.uuid"
 	grpc_pb "github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	zinx_pb "github.com/zhangrt/voyager1_core/zinx/pb"
@@ -62,11 +61,12 @@ func GrpcProtoClaimsTransformClaims(result *grpc_pb.CustomClaims) *luna.CustomCl
 	}
 	s := result.Claims.ID
 
-	bys := String2BytesSlicePlus(s)
+	// bys := String2BytesSlicePlus(s)
 
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:      uuid.FromBytesOrNil(bys),
+			// ID:      uuid.FromBytesOrNil(bys),
+			ID:      s,
 			Account: result.Claims.Account,
 			Name:    result.Claims.Name,
 			RoleIds: result.Claims.RoleIds,
@@ -92,11 +92,9 @@ func ZinxProtoClaimsTransformClaims(result *zinx_pb.CustomClaims) *luna.CustomCl
 	}
 	s := result.Claims.ID
 
-	bys := String2BytesSlicePlus(s)
-
 	claims := &luna.CustomClaims{
 		BaseClaims: luna.BaseClaims{
-			ID:      uuid.FromBytesOrNil(bys),
+			ID:      s,
 			Account: result.Claims.Account,
 			Name:    result.Claims.Name,
 			RoleIds: result.Claims.RoleIds,

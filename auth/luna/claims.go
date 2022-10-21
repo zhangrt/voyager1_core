@@ -4,7 +4,6 @@ import (
 	"github.com/zhangrt/voyager1_core/global"
 
 	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
 )
 
 func GetClaims(c *gin.Context) (*CustomClaims, error) {
@@ -27,20 +26,6 @@ func GetUserID(c *gin.Context) string {
 	if claims, exists := c.Get(global.G_CONFIG.AUTHKey.User); !exists {
 		if cl, err := GetClaims(c); err != nil {
 			return ""
-		} else {
-			return cl.ID.String()
-		}
-	} else {
-		waitUse := claims.(*CustomClaims)
-		return waitUse.ID.String()
-	}
-}
-
-// GetUserUuid 从Gin的Context中获取从jwt解析出来的用户UUID
-func GetUserUUID(c *gin.Context) uuid.UUID {
-	if claims, exists := c.Get(global.G_CONFIG.AUTHKey.User); !exists {
-		if cl, err := GetClaims(c); err != nil {
-			return uuid.UUID{}
 		} else {
 			return cl.ID
 		}

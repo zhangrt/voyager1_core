@@ -3,7 +3,6 @@ package star
 import (
 	"context"
 
-	uuid "github.com/satori/go.uuid"
 	"github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/util"
@@ -32,18 +31,9 @@ func (claimant *ClaimantGrpc) GetUserID(token string) string {
 	var ID string
 	claims, err := claimant.GetUser(token)
 	if err != nil {
-		ID = claims.ID.String()
+		ID = claims.ID
 	}
 	return ID
-}
-
-func (claimant *ClaimantGrpc) GetUserUUID(token string) uuid.UUID {
-	var UUID uuid.UUID
-	claims, err := claimant.GetUser(token)
-	if err != nil {
-		UUID = claims.ID
-	}
-	return UUID
 }
 
 func (claimant *ClaimantGrpc) GetUserAuthorityId(token string) []string {

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"runtime"
+	"strings"
 	"sync"
 	"testing"
 
@@ -60,7 +61,7 @@ func TestAuth(t *testing.T) {
 				authClient := pb.NewAuthServiceClient(conn)
 				j := luna.NewTOKEN() // 唯一签名
 				claims := j.CreateClaims(luna.BaseClaims{
-					ID:      uuid.NewV4(),
+					ID:      strings.ReplaceAll(uuid.NewV4().String(), "-", ""),
 					Name:    "test",
 					Account: "test",
 					RoleIds: []string{"101"},
