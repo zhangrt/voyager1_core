@@ -15,7 +15,7 @@ type GS_BASE_MODEL_ID_UINT struct {
 	// 创建时间
 	LastUpdaterId   string    `json:"lastUpdateId"  gorm:"comment:更新人id"`
 	LastUpdater     string    `json:"lastUpdater"  gorm:"comment:更新人"`
-	CreatedTime     time.Time `json:"createdTime" form:"createdTime"`         // 创建时间
+	CreateTime      time.Time `json:"createTime" form:"createTime"`           // 创建时间
 	LastUpdatedTime time.Time `json:"lastUpdatedTime" form:"lastUpdatedTime"` // 更新时间
 	Deleted         int       `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
 	// DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
@@ -30,7 +30,7 @@ type GS_BASE_MODEL_ID_STRING struct {
 	// 创建时间
 	LastUpdaterId   string    `json:"lastUpdateId"  gorm:"comment:更新人id"`
 	LastUpdater     string    `json:"lastUpdater"  gorm:"comment:更新人"`
-	CreatedTime     time.Time `json:"createdTime" form:"createdTime"`         // 创建时间
+	CreateTime      time.Time `json:"createTime" form:"createTime"`           // 创建时间
 	LastUpdatedTime time.Time `json:"lastUpdatedTime" form:"lastUpdatedTime"` // 更新时间
 	Deleted         int       `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
 	// DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
@@ -45,7 +45,7 @@ type GS_BASE_MODEL_ID_NO_PRIMARY struct {
 	// 创建时间
 	LastUpdaterId   string    `json:"lastUpdateId"  gorm:"comment:更新人id"`
 	LastUpdater     string    `json:"lastUpdater"  gorm:"comment:更新人"`
-	CreatedTime     time.Time `json:"createdTime" form:"createdTime"`         // 创建时间
+	CreateTime      time.Time `json:"createTime" form:"createTime"`           // 创建时间
 	LastUpdatedTime time.Time `json:"lastUpdatedTime" form:"lastUpdatedTime"` // 更新时间
 	Deleted         int       `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
 	// DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
@@ -59,7 +59,7 @@ type GS_BASE_MODEL_ID_NONE struct {
 	// 创建时间
 	LastUpdaterId   string    `json:"lastUpdateId"  gorm:"comment:更新人id"`
 	LastUpdater     string    `json:"lastUpdater"  gorm:"comment:更新人"`
-	CreatedTime     time.Time `json:"createdTime" form:"createdTime"`         // 创建时间
+	CreateTime      time.Time `json:"createTime" form:"createTime"`           // 创建时间
 	LastUpdatedTime time.Time `json:"lastUpdatedTime" form:"lastUpdatedTime"` // 更新时间
 	Deleted         int       `json:"deleted"  gorm:"column:deleted;size:1;comment:删除标记"`
 	// DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
