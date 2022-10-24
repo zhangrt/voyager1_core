@@ -33,7 +33,7 @@ func JWTAuth(impl string) gin.HandlerFunc {
 		act := c.Request.Method
 		t, m, claims, newToken := auth.GrantedAuthority(token, path, act)
 		if !t {
-			response.FailWithDetailed(gin.H{"reload": true}, m, c)
+			response.FailWithDetailed(gin.H{global.G_CONFIG.AUTHKey.Reload: true}, m, c)
 			c.Abort()
 		} else {
 			// refresh token

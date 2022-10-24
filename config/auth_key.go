@@ -7,4 +7,5 @@ type AUTHKey struct {
 	RefreshExpiresAt string `mapstructure:"refresh-expires-at" json:"refresh-expires-at" yaml:"refresh-expires-at"` // Token Key  			like: new-expires-at
 	User             string `mapstructure:"user" json:"user" yaml:"user"`                                           // User Key   			like: clims
 	UserId           string `mapstructure:"user-id" json:"user-id" yaml:"user-id"`                                  // UserId Key 			like: x-user-id
+	Reload           string `mapstructure:"reload" json:"reload" yaml:"reload"`                                     // reload Key   		like: reload
 }
