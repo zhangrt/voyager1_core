@@ -10,7 +10,7 @@ import (
 )
 
 // Token 结构体
-type TOKEN struct {
+type TokenHelper struct {
 	SigningKey []byte
 }
 
@@ -21,13 +21,13 @@ var (
 	TokenInvalid     = errors.New("Couldn't handle this token:")
 )
 
-func NewTOKEN() *TOKEN {
-	return &TOKEN{
+func NewTOKEN() *TokenHelper {
+	return &TokenHelper{
 		[]byte(global.G_CONFIG.JWT.SigningKey),
 	}
 }
 
-func (j *TOKEN) CreateClaims(baseClaims BaseClaims) CustomClaims {
+func (j *TokenHelper) CreateClaims(baseClaims BaseClaims) CustomClaims {
 	claims := CustomClaims{
 		BaseClaims: baseClaims,
 		BufferTime: global.G_CONFIG.JWT.BufferTime, // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
@@ -41,13 +41,13 @@ func (j *TOKEN) CreateClaims(baseClaims BaseClaims) CustomClaims {
 }
 
 // 创建一个token
-func (j *TOKEN) CreateToken(claims CustomClaims) (string, error) {
+func (j *TokenHelper) CreateToken(claims CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
 }
 
 // CreateTokenByOldToken 旧token 换新token 使用归并回源避免并发问题
-func (j *TOKEN) CreateTokenByOldToken(oldToken string, claims CustomClaims) (string, error) {
+func (j *TokenHelper) CreateTokenByOldToken(oldToken string, claims CustomClaims) (string, error) {
 	v, err, _ := global.G_Concurrency_Control.Do("JWT:"+oldToken, func() (interface{}, error) {
 		return j.CreateToken(claims)
 	})
@@ -55,7 +55,7 @@ func (j *TOKEN) CreateTokenByOldToken(oldToken string, claims CustomClaims) (str
 }
 
 // 解析 token
-func (j *TOKEN) ParseToken(tokenString string) (*CustomClaims, error) {
+func (j *TokenHelper) ParseToken(tokenString string) (*CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
