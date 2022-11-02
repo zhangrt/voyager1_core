@@ -10,6 +10,11 @@ const (
 )
 
 const (
+	LUNA = "luna"
+	STAR = "star"
+)
+
+const (
 	CACHE_TOKEN_PREFIX = "$token:"
 )
 
