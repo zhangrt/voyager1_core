@@ -13,16 +13,16 @@ import (
 )
 
 var (
-	auth star.AUTH
-	once sync.Once
+	authJ star.AUTH
+	onceJ sync.Once
 )
 
 // 拦截器JWT 拦截请求，GRPC方式校验Token合法性及权限验证
 // JWT拦截器 传入impl选择不同通信方式的接口实现
 // star服务可使用此默认handler，也可依据特殊业务通过提供的Auth接口自行实现
-func JWTAuth(impl string) gin.HandlerFunc {
-	once.Do(func() {
-		auth = star.NewAUTH(impl)
+func JWTAuthJ(impl string) gin.HandlerFunc {
+	onceJ.Do(func() {
+		authJ = star.NewAUTH(impl)
 	})
 	return func(c *gin.Context) {
 		// 我们这里jwt鉴权取头部信息 x-token 登录时回返回token信息 这里前端需要把token存储到cookie或者本地localStorage中 不过需要跟后端协商过期时间 可以约定刷新令牌或者重新登录
@@ -31,7 +31,7 @@ func JWTAuth(impl string) gin.HandlerFunc {
 		path := c.Request.URL.Path
 		// 获取请求方法
 		act := c.Request.Method
-		t, m, claims, newToken := auth.GrantedAuthority(token, path, act)
+		t, m, claims, newToken := authJ.GrantedAuthority(token, path, act)
 		if !t {
 			response.FailWithDetailed(gin.H{global.G_CONFIG.AUTHKey.Reload: true}, m, c)
 			c.Abort()

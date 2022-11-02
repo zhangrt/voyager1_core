@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/zhangrt/voyager1_core/auth/grpc/pb"
+	pbJ "github.com/zhangrt/voyager1_core/com/gs/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/global"
 	"google.golang.org/grpc"
 )
@@ -17,6 +18,18 @@ func GetGrpcClient() (*grpc.ClientConn, pb.AuthServiceClient) {
 		return nil, nil
 	}
 	authClient := pb.NewAuthServiceClient(conn)
+
+	return conn, authClient
+}
+
+// 获取 conn 和 Client
+func GetGrpcClientJ() (*grpc.ClientConn, pbJ.AuthServiceClient) {
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.G_CONFIG.Grpc.Client.Host, global.G_CONFIG.Grpc.Client.Port), grpc.WithInsecure())
+	if err != nil {
+		log.Fatal(err)
+		return nil, nil
+	}
+	authClient := pbJ.NewAuthServiceClient(conn)
 
 	return conn, authClient
 }

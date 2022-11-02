@@ -3,27 +3,80 @@ package grpc_test
 import (
 	"context"
 	"fmt"
-	"log"
+	"strings"
+	"sync"
 	"testing"
+	"time"
 
-	service "github.com/zhangrt/voyager1_core/auth/grpc/pb"
-
-	"google.golang.org/grpc"
+	uuid "github.com/satori/go.uuid"
+	"github.com/zhangrt/voyager1_core/auth/grpc"
+	"github.com/zhangrt/voyager1_core/auth/grpc/service"
+	"github.com/zhangrt/voyager1_core/auth/luna"
+	"github.com/zhangrt/voyager1_core/auth/star"
+	pb "github.com/zhangrt/voyager1_core/com/gs/voyager1_core/auth/grpc/pb"
+	"github.com/zhangrt/voyager1_core/global"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-func TestClient(t *testing.T) {
-	conn, err := grpc.Dial(":8081", grpc.WithInsecure())
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
+func TestGrpcJ(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	global.G_CONFIG.JWT.SigningKey = "gsafety"
+	global.G_CONFIG.AUTHKey.RefreshToken = "new-token"
+	global.G_CONFIG.System.UseMultipoint = true
+	global.G_CONFIG.JWT.ExpiresTime = 10
+	global.G_CONFIG.JWT.BufferTime = 7
+	global.G_CONFIG.Grpc.Server.Host = "127.0.0.1"
+	global.G_CONFIG.Grpc.Server.Port = 5431
+	global.G_CONFIG.Grpc.Client.Host = "127.0.0.1"
+	global.G_CONFIG.Grpc.Client.Port = 5431
+	global.G_CONFIG.Grpc.Server.Network = "tcp"
+	global.G_LOG = zap.New(zapcore.NewTee(), zap.AddCaller())
+	luna.RegisterCasbin(&luna.UnimplementedCasbin{}) // 注入Casbin实现类
+	luna.RegisterJwt(&luna.UnimplementedJwt{})       // 注入Jwt实现类
 
-	authClient := service.NewAuthServiceClient(conn)
-	res, err := authClient.GetUser(context.Background(), &service.Authentication{
-		Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiZjBjY2M1ZGEtMzA5NC00MWJkLWJmN2UtNzE1MDZjMTdjNDQ3IiwiSUQiOjc5NDI4MDIxMTY5MjgxNDMzNywiQWNjb3VudCI6InRlc3QiLCJOYW1lIjoiQklHIE1vbnN0ZXIiLCJBdXRob3JpdHlJZCI6Ijk1MjgiLCJBdXRob3JpdHkiOnsiQ3JlYXRlZEF0IjoiMjAyMi0wOS0wNlQxOTo1ODowMy40MTM1MDgrMDg6MDAiLCJVcGRhdGVkQXQiOiIyMDIyLTA5LTA2VDE5OjU4OjA0LjY1NDI4MSswODowMCIsIkRlbGV0ZWRBdCI6bnVsbCwiYXV0aG9yaXR5SWQiOiI5NTI4IiwiYXV0aG9yaXR5TmFtZSI6Iua1i-ivleinkuiJsiIsInBhcmVudElkIjoiMCIsImRlZmF1bHRSb3V0ZXIiOiI0MDQifSwiQXV0aG9yaXRpZXMiOm51bGwsIkRlcGFydE1lbnRJZCI6IiIsIkRlcGFydE1lbnROYW1lIjoiIiwiVW5pdElkIjoiIiwiVW5pdE5hbWUiOiIiLCJCdWZmZXJUaW1lIjoxMjAsImV4cCI6MTY2MzkwODYxMiwiaXNzIjoiZ3NhZmV0eSIsIm5iZiI6MTY2MzkwNzQzMn0.q3r3QwpLGcAq45OHinhB1wncEbATCjXwKdbMApgXLVM",
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(res)
+	go func() {
+		defer wg.Done()
+		grpc.NewServerJ().RegisterAuthServiceServer(&service.AuthServiceJ{}).LunchGrpcServerJ()
+	}()
+	time.Sleep(time.Second * 1)
+	go func() {
+		j := luna.NewTOKEN() // 唯一签名
+		claims := j.CreateClaims(luna.BaseClaims{
+			ID:      strings.ReplaceAll(uuid.NewV4().String(), "-", ""),
+			Name:    "test",
+			Account: "test",
+			RoleIds: []string{"101"},
+		})
+		token, _ := j.CreateToken(claims)
+
+		for {
+			time.Sleep(time.Second * 2)
+			conn, client := star.GetGrpcClientJ()
+			defer star.CloseConn(conn)
+			r, e := client.GrantedAuthority(context.Background(), &pb.Policy{
+				Token: token,
+			})
+			if e != nil {
+				fmt.Errorf(e.Error())
+			}
+			fmt.Println("Result:", r)
+			fmt.Println()
+			if r.NewToken != "" {
+				token = r.NewToken
+			}
+			if r.Msg == "Authorization has expired" {
+				break
+			}
+			u, err := client.GetUser(context.Background(), &pb.Authentication{
+				Token: token,
+			})
+			if err == nil {
+				fmt.Println("USER:", u)
+			}
+			fmt.Println("----------------------------------------------")
+		}
+	}()
+	wg.Wait()
 }

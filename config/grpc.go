@@ -1,8 +1,8 @@
 package config
 
 type Grpc struct {
-	Server GrpcServer `mapstructure:"server" json:"server" yaml:"server"`
-	Client GrpcClient `mapstructure:"client" json:"client" yaml:"client"`
+	Server GrpcServer `mapstructure:"j-server" json:"j-server" yaml:"j-server"`
+	Client GrpcClient `mapstructure:"j-client" json:"j-client" yaml:"j-client"`
 }
 
 type GrpcServer struct {

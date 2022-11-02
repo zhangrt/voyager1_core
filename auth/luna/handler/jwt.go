@@ -38,7 +38,7 @@ func JWTAuth() gin.HandlerFunc {
 			if err != nil {
 				msg = err.Error()
 			}
-			response.FailWithDetailed(gin.H{"reload": true}, msg, c)
+			response.FailWithDetailed(gin.H{global.G_CONFIG.AUTHKey.Reload: true}, msg, c)
 			c.Abort()
 		}
 

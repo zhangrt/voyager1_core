@@ -175,7 +175,7 @@ func (s *Star) Receipe(id int32) {
 func protoTransformClaims(c *auth.CustomClaims) *pb.CustomClaims {
 	p := pb.CustomClaims{
 		Claims: &pb.BaseClaims{
-			ID:      c.BaseClaims.ID.String(),
+			ID:      c.BaseClaims.ID,
 			RoleIds: c.BaseClaims.RoleIds,
 			Account: c.BaseClaims.Account,
 			Name:    c.BaseClaims.Name,

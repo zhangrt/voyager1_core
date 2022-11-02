@@ -1,0 +1,58 @@
+syntax = "proto3"; 						        //指定版本信息，不指定会报错
+option go_package = "github.com/zhangrt/voyager1_core/auth/grpc/pb";                       //不指定会报错
+package com.gs.voyager1_core.auth.grpc.pb;						//后期生成go文件的包名
+
+
+service AuthService {
+
+    rpc GrantedAuthority(Policy) returns (Result) {};
+
+    rpc GetUser(Authentication)returns (User) {};
+}
+
+// token 鉴权
+message Authentication {
+    string token = 1;
+}
+
+// path和method请求验证策略
+message Policy {
+    string token = 1;
+    string path = 2;
+    string method = 3;
+}
+
+message Result {
+    bool success = 1;
+    string msg = 2;
+    CustomClaims claims = 3;
+    string newToken = 4;
+}
+message User {
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    CustomClaims claims = 3;
+}
+
+message CustomClaims {
+    BaseClaims claims       = 1;
+	int64 BufferTime        = 2;
+	StandardClaims standard = 3;
+}
+
+message BaseClaims {
+    string ID         = 1;
+    repeated string roleIds    = 2;
+    string account     = 3;
+    string name     = 4;
+}
+
+message StandardClaims {
+	string audience     = 1;
+	int64 expiresAt     = 2;
+	string id           = 3;
+	int64 issuedAt      = 4;
+	string issuer       = 5;
+	int64 notBefore     = 6;
+	string subject      = 7;
+}
