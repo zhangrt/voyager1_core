@@ -6,7 +6,6 @@ import (
 	"github.com/zhangrt/voyager1_core/auth/grpc/pb"
 	"github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_core/util"
-
 )
 
 // 授权鉴权接口Grpc的实现
@@ -23,8 +22,8 @@ func (authentication *AuthenticationGrpc) GrantedAuthority(token string, path st
 	})
 	if err != nil {
 		r = false
+		return r, err.Error(), nil, ""
 	} else {
-		r = result.Success
+		return result.Success, result.Msg, util.GrpcProtoClaimsTransformClaims(result.Claims), result.NewToken
 	}
-	return r, result.Msg, util.GrpcProtoClaimsTransformClaims(result.Claims), result.NewToken
 }
