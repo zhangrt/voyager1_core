@@ -16,6 +16,8 @@ func NewAUTH(impl string) AUTH {
 	switch impl {
 	case constant.GPRC:
 		return &AuthenticationGrpc{}
+	case constant.GRPCJ:
+		return &AuthenticationGrpcJ{}
 	case constant.Zinx:
 		return &AuthenticationZinx{}
 	default:

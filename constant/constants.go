@@ -5,6 +5,7 @@ package constant
 const (
 	MARKER = "&:$"
 	GPRC   = "grpc"
+	GRPCJ  = "grpcj"
 	Zinx   = "zinx"
 )
 

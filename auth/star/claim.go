@@ -18,6 +18,8 @@ func NewCLAMI(impl string) CLAIM {
 	switch impl {
 	case constant.GPRC:
 		return &ClaimantGrpc{}
+	case constant.GRPCJ:
+		return &ClaimantGrpcJ{}
 	case constant.Zinx:
 		return &ClaimantZinx{}
 	default:
