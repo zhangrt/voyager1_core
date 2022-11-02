@@ -4,6 +4,7 @@ type System struct {
 	Application   string `mapstructure:"application" json:"application" yaml:"application"`          // application
 	Host          string `mapstructure:"host" json:"host" yaml:"host"`                               // host
 	Port          string `mapstructure:"port" json:"port" yaml:"port"`                               // port
+	Role          string `mapstructure:"role" json:"role" yaml:"role"`                               // role
 	RootPath      string `mapstructure:"root-path" json:"root-path" yaml:"root-path"`                // root-path
 	CacheType     string `mapstructure:"cache-type" json:"cache-type" yaml:"cache-type"`             // 缓存类型
 	DbType        string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`                      // 数据库类型
